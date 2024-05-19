@@ -1,0 +1,38 @@
+.footer {
+    color: var(--primary-text-color);
+    z-index: 1;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    padding: 2rem 2rem 0.25rem 2rem;
+    display: flex;
+    justify-content:center;
+    width: 100%;
+}
+
+.footer ul {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+}
+
+.footer a {
+    position: relative;
+    text-decoration: none;
+    color: rgb(241, 233, 233);
+}
+
+.footer a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 1px;
+    bottom: 0;
+    left: 0;
+    background-color: rgb(205, 193, 193);
+    transition: width .3s;
+}
+
+.footer a:hover::after {
+    width: 100%;
+}
