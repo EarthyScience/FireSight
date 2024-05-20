@@ -9,6 +9,7 @@ Take a peek at what we've already made so far and our future plans for `FireSigh
   - Landing page
 - [x] **Modal About project**
   - Done by using React Portals and jotai
+  - Abstract away into a new component.
 - [x] **Footer component**
   - Short description / more?
 - [x] **Nav/Icon component**

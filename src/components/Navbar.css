@@ -3,11 +3,11 @@
   position: absolute;
   display: flex;
   justify-content: space-between;
-  top: 1%;
-  right: 2%;
+  top: 8px;
+  right: 8px;
   left: 50%;
   transform: translateX(-50%);
-  width: 90%;
+  width: 98%;
   max-width: 1024px;
   z-index: 1;
 }
@@ -43,7 +43,7 @@
 
 .navbar a:hover {
     text-decoration: none; /* Remove underline */
-    color:var(--primary-text-color);
+    color:var(--tp-button-background-color-focus);
 }
   
 .navbar a:hover::after {
