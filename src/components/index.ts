@@ -1,16 +1,17 @@
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import Sphere from "./Sphere";
+import Cube from "./Cubes";
 import CanvasGeometry from "./CanvasGeometry";
 import AboutButton from "./AboutButton";
-// import VolumeShader from "./VolumeShader";
-
+import TestData from "./Volumetric";
 
 export {
   Navbar,
   Footer,
   Sphere,
+  Cube,
   CanvasGeometry,
   AboutButton,
-  // VolumeShader,  
+  TestData,
 };

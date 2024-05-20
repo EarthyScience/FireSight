@@ -1,4 +1,4 @@
-import { Navbar, Footer, CanvasGeometry } from './components';
+import { Navbar, Footer, CanvasGeometry, TestData } from './components';
 import Overlays from "./components/Overlays";
 
 import './App.css'
@@ -7,6 +7,7 @@ export function App() {
     <>
     <Overlays />
     <Navbar />
+    <TestData />
     <Footer />
     <CanvasGeometry />
     <div id="myPane" className='pane'></div>
