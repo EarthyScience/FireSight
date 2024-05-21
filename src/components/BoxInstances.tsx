@@ -49,7 +49,7 @@ function Boxes({ length = 1000, size = [0.05, 0.05, 0.05] }) {
     }, [data]);
 
     const meshRef = useRef<Mesh>(null);
-    const prevRef = useRef()
+    const prevRef = useRef<number | null>(null);
     useEffect(() => void (prevRef.current = hovered), [hovered])
 
     usePaneInput(pane, 'color', { label: 'Color' }, (event) => {
