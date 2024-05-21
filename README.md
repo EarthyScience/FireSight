@@ -16,6 +16,7 @@ Take a peek at what we've already made so far and our future plans for `FireSigh
   - About modal descriptor, plus icon. More options? 
 - [x] **Update tweekpane-react**: A PR to original repo has been made, but all changes had been integrated into this app.
   - [x] **Why this? Easy to customize and add new input parameters**
+- [ ] **Do a good colormap selector**
 - [ ] **Cube geometry / shader**
 - [ ] **Volumetric geometry / shader**
 - [ ] **Points / shader**
