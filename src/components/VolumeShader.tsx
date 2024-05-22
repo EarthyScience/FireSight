@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import { useRef } from 'react';
+import { useFrame } from '@react-three/fiber';
+
 // import { shaderMaterial } from '@react-three/drei';
 import vertexShader from '../utils/shaders/vertex.glsl'
 import fragmentShader from '../utils/shaders/fragment.glsl'
@@ -19,29 +21,31 @@ for (var i = 0; i < dataColor.length; i++) {
   colData[i * 4 + 3] = 255; // 255
 }
 const texture = new THREE.DataTexture(colData, dataColor.length, 1, THREE.RGBAFormat);
-// console.log(texture)
+texture.needsUpdate = true;
+// console.log(dataColor.length)
 
-const volData = new Uint8Array( 10 * 10 * 10 );
-for ( let x = 0; x < 1000; x ++ ) {
+
+const volData = new Uint8Array( 100 * 100 * 100 );
+for ( let x = 0; x < 1000000; x ++ ) {
   volData[ x ] = Math.random()*255;
 }
 
-const volTexture = new THREE.Data3DTexture(volData, 10, 10, 10)
+const volTexture = new THREE.Data3DTexture(volData, 100, 100, 100)
 volTexture.format = THREE.RedFormat;
-volTexture.minFilter = THREE.LinearFilter;
-volTexture.magFilter = THREE.LinearFilter;
+volTexture.minFilter = THREE.NearestFilter;
+volTexture.magFilter = THREE.NearestFilter;
 volTexture.unpackAlignment = 1;
 volTexture.needsUpdate = true;
 
 // console.log(volTexture)
-console.log(texture)
 export function VolumeShader() {
-
   const meshRef = useRef()
-
+  useFrame(({ camera }) => {
+    meshRef.current.material.uniforms.cameraPos.value.copy(camera.position)
+  })
   return (
   <mesh ref={meshRef}>
-    <boxGeometry args={[1, 1, 1]} />
+    <boxGeometry args={[2, 2, 2]} />
     <shaderMaterial
       attach="material"
       args={[{
@@ -49,10 +53,10 @@ export function VolumeShader() {
         uniforms: {
           map: { value: volTexture },
           cameraPos: { value: new THREE.Vector3() },
-          // threshold: { value: threshold },
-          // steps: { value: steps },
-          // scale: {value: scale},
-          // flip: {value: flip},
+          threshold: { value: 0.0 },
+          steps: { value: 200 },
+          scale: {value: 1},
+          flip: {value: false},
           cmap: {value: texture}
         },
         vertexShader,

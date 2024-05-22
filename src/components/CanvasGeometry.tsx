@@ -2,7 +2,7 @@ import { Canvas } from '@react-three/fiber';
 // import Sphere from './Sphere';
 // import Cube from './Cubes';
 // import Boxes from './BoxInstances';
-// import BoxedParticles from './ParticleInstances';
+import BoxedParticles from './ParticleInstances';
 
 import {VolumeShader} from './VolumeShader'
 
