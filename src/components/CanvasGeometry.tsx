@@ -2,7 +2,10 @@ import { Canvas } from '@react-three/fiber';
 // import Sphere from './Sphere';
 // import Cube from './Cubes';
 // import Boxes from './BoxInstances';
-import BoxedParticles from './ParticleInstances';
+// import BoxedParticles from './ParticleInstances';
+
+import {VolumeShader} from './VolumeShader'
+
 import { Perf } from 'r3f-perf'
 
 import {
@@ -18,7 +21,9 @@ export function CanvasGeometry() {
       <Canvas shadows camera={{ position: [0, 0, 4.5], fov: 50 }}>
         <Perf position="bottom-left" />
         <group position={[0, 0, 0]}>
-          <BoxedParticles />
+          <VolumeShader />
+
+          {/* <BoxedParticles /> */}
           {/* <Cube /> */}
           {/* <Sphere /> */}
           <OrbitControls enableDamping={true} enablePan={false} enableZoom={true} minPolarAngle={0} maxPolarAngle={Math.PI / 2}/>
