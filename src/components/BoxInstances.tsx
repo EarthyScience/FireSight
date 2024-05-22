@@ -2,34 +2,22 @@ import * as THREE from 'three';
 import { Color, Mesh, MeshStandardMaterial } from 'three';
 import { useRef, useMemo, useState, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
-import niceColors from 'nice-color-palettes';
+// import niceColors from 'nice-color-palettes';
 import { Center } from '@react-three/drei';
 import {
     usePaneInput,
     useTweakpane,
 } from '../../pane';
-import { Lut } from 'three/examples/jsm/math/Lut.js';
+import { setPalette, valuetoCmap, minMax, genRand} from '../utils/colormap'
 
 const tempObject = new THREE.Object3D();
 const tempColor = new THREE.Color();
 
-const lut = new Lut('blackbody', 512);
-lut.minV = 1;
-lut.maxV = 300;
-
-type DataType = { color: THREE.Color };
-const data: DataType[] = [];
-for (let x = 1; x <= 10; x++) {
-    for (let y = 1; y <= 10; y++) {
-        for (let z = 1; z <= 10; z++) {
-            const result = lut.getColor(x ** 2 + y ** 2 + z ** 2);
-            console.log(result);
-            data.push({ color: result });
-        }
-    }
-}
-
-console.log(data);
+// Generate 1000 random numbers
+const raw_data = genRand(1000);
+const { min, max } = minMax(raw_data);
+const cmap = setPalette({ mn: min, mx: max });
+const data = raw_data.map(value => valuetoCmap({ cmap, value }));
 
 function Boxes({ length = 1000, size = [0.05, 0.05, 0.05] }) {
     const containerElement = document.getElementById('myPane');
@@ -67,6 +55,7 @@ function Boxes({ length = 1000, size = [0.05, 0.05, 0.05] }) {
             for (let z = 0; z < root; z++) {
               const id = i++
               tempObject.position.set((halfRoot - x)/root, (halfRoot - y)/root, (halfRoot - z)/root)
+              
               if (hovered !== prevRef.Current) {
                 ;(id === hovered ? tempColor.setRGB(10, 10, 10) : tempColor.set(data[id].color)).toArray(colorArray, id * 3)
                 meshRef.current.geometry.attributes.color.needsUpdate = true
