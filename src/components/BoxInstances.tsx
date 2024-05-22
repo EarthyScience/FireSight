@@ -13,13 +13,19 @@ import { setPalette, valuetoCmap, minMax, genRand} from '../utils/colormap'
 const tempObject = new THREE.Object3D();
 const tempColor = new THREE.Color();
 
+// lon, lat, time
+// 1440, 720, 100
+const lon = 360/2/2;
+const lat = 180/2/2;
+const tSteps = 40;
 // Generate 1000 random numbers
-const raw_data = genRand(1000);
+const raw_data = genRand(lon*lat*tSteps);
 const { min, max } = minMax(raw_data);
 const cmap = setPalette({ mn: min, mx: max });
 const data = raw_data.map(value => valuetoCmap({ cmap, value }));
 
-function Boxes({ length = 1000, size = [0.05, 0.05, 0.05] }) {
+function Boxes({ lx = 360/2/2, ly=180/2/2, lz=40, size = [0.016, 0.016, 0.016] }) {
+    const length = lx * ly * lz
     const containerElement = document.getElementById('myPane');
     const pane = useTweakpane(
         {
@@ -49,12 +55,15 @@ function Boxes({ length = 1000, size = [0.05, 0.05, 0.05] }) {
     useFrame(() => {
         let i = 0;
         const root = Math.round(Math.pow(length, 1 / 3));
-        const halfRoot = root / 2;
-        for (let x = 0; x < root; x++)
-          for (let y = 0; y < root; y++)
-            for (let z = 0; z < root; z++) {
+        const halfRoot_x = lx / 2;
+        const halfRoot_y = ly / 2;
+        const halfRoot_z = lz / 2;
+
+        for (let x = 0; x < lx; x++)
+          for (let y = 0; y < ly; y++)
+            for (let z = 0; z < lz; z++) {
               const id = i++
-              tempObject.position.set((halfRoot - x)/root, (halfRoot - y)/root, (halfRoot - z)/root)
+              tempObject.position.set((halfRoot_x - x)/root, (halfRoot_y - y)/root, (halfRoot_z - z)/root)
               
               if (hovered !== prevRef.Current) {
                 ;(id === hovered ? tempColor.setRGB(10, 10, 10) : tempColor.set(data[id].color)).toArray(colorArray, id * 3)

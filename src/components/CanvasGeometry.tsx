@@ -22,7 +22,7 @@ export function CanvasGeometry() {
             <RandomizedLight amount={8} radius={5} ambient={0.5} position={[5, 3, 2]} bias={0.001} />
           </AccumulativeShadows>
         </group>
-        <Environment preset='dawn' background backgroundBlurriness={0.5} />
+        <Environment preset='studio' background backgroundBlurriness={0.5} />
       </Canvas>
     </div>
   )
