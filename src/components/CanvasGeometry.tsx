@@ -1,7 +1,10 @@
 import { Canvas } from '@react-three/fiber';
 // import Sphere from './Sphere';
 // import Cube from './Cubes';
-import Boxes from './BoxInstances';
+// import Boxes from './BoxInstances';
+import BoxedParticles from './ParticleInstances';
+import { Perf } from 'r3f-perf'
+
 import {
   AccumulativeShadows,
   RandomizedLight,
@@ -13,8 +16,9 @@ export function CanvasGeometry() {
   return (
     <div className='canvas'>
       <Canvas shadows camera={{ position: [0, 0, 4.5], fov: 50 }}>
+        <Perf position="bottom-left" />
         <group position={[0, 0, 0]}>
-          <Boxes />
+          <BoxedParticles />
           {/* <Cube /> */}
           {/* <Sphere /> */}
           <OrbitControls enableDamping={true} enablePan={false} enableZoom={true} minPolarAngle={0} maxPolarAngle={Math.PI / 2}/>
@@ -22,7 +26,7 @@ export function CanvasGeometry() {
             <RandomizedLight amount={8} radius={5} ambient={0.5} position={[5, 3, 2]} bias={0.001} />
           </AccumulativeShadows>
         </group>
-        <Environment preset='studio' background backgroundBlurriness={0.5} />
+        <Environment preset='dawn' background backgroundBlurriness={0.5} />
       </Canvas>
     </div>
   )
