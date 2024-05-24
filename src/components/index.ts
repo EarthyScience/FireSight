@@ -4,7 +4,7 @@ import Sphere from "./Sphere";
 import Cube from "./Cubes";
 import CanvasGeometry from "./CanvasGeometry";
 import AboutButton from "./AboutButton";
-import TestData from "./Volumetric";
+// import TestData from "./Volumetric";
 
 export {
   Navbar,
@@ -13,5 +13,5 @@ export {
   Cube,
   CanvasGeometry,
   AboutButton,
-  TestData,
+  // TestData,
 };
