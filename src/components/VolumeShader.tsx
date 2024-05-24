@@ -7,6 +7,15 @@ import vertexShader from '../utils/shaders/vertex.glsl'
 import fragmentShader from '../utils/shaders/fragment.glsl'
 
 import { setPalette, valuetoCmap} from '../utils/colormap'
+import {
+  // useListBlade,
+  // usePaneFolder,
+  // usePaneInput,
+  useSliderBlade,
+  // useTextBlade,
+  useTweakpane,
+} from '../../pane'
+
 
 const unitInterval = Array.from({ length: 255 }, (_, index) => index / 254);
 const cmap = setPalette({ mn: 0, mx: 1 });
@@ -39,6 +48,24 @@ volTexture.needsUpdate = true;
 
 // console.log(volTexture)
 export function VolumeShader() {
+  const containerElement = document.getElementById('myPane');
+  const pane = useTweakpane(
+    {
+      threshold: 0.0,
+    },
+    {
+      title: 'Geometry Settings',
+      container: containerElement,
+    }
+  )
+  const [threshold] = useSliderBlade(pane, {
+    label: 'threshold',
+    value: 0.0,
+    min: 0,
+    max: 1,
+    step: 0.01,
+    format: (value) => value.toFixed(2),
+  })
   const meshRef = useRef()
   useFrame(({ camera }) => {
     meshRef.current.material.uniforms.cameraPos.value.copy(camera.position)
@@ -53,7 +80,7 @@ export function VolumeShader() {
         uniforms: {
           map: { value: volTexture },
           cameraPos: { value: new THREE.Vector3() },
-          threshold: { value: 0.0 },
+          threshold: { value: threshold },
           steps: { value: 200 },
           scale: {value: 1},
           flip: {value: false},
