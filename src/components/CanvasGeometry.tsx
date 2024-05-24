@@ -3,7 +3,7 @@ import Sphere from './Sphere';
 // import Cube from './Cubes';
 // import Boxes from './BoxInstances';
 import BoxedParticles from './ParticleInstances';
-
+import BoxInstances from './BoxInstances';
 import {VolumeShader} from './VolumeShader'
 
 import { Perf } from 'r3f-perf'
@@ -20,8 +20,8 @@ export function CanvasGeometry() {
     <div className='canvas'>
       <Canvas shadows camera={{ position: [-4, 5, 4.5], fov: 50 }}>
         <Perf position="bottom-left" />
-          <VolumeShader />
-
+          {/* <VolumeShader /> */}
+          <BoxInstances />
           {/* <BoxedParticles /> */}
           {/* <Cube /> */}
           {/* <Sphere /> */}
