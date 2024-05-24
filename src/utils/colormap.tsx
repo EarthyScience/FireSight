@@ -26,8 +26,8 @@ export function minMax(values: number[]): { min: number | undefined, max: number
     // Filter out NaN values
     const validValues = values.filter(value => !isNaN(value));
     // Calculate min and max
-    const min = validValues.length > 0 ? Math.min(...validValues) : undefined;
-    const max = validValues.length > 0 ? Math.max(...validValues) : undefined;
+    const min = validValues.length > 0 ? validValues.reduce((a,b) => Math.min(a,b)) : undefined;
+    const max = validValues.length > 0 ? validValues.reduce((a,b) => Math.max(a,b)) : undefined;
     return { min, max };
 }
 export function genRand(count: number): number[] {

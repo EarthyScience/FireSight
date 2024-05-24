@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-
+import { Center } from '@react-three/drei';
 // import { shaderMaterial } from '@react-three/drei';
 import vertexShader from '../utils/shaders/vertex.glsl'
 import fragmentShader from '../utils/shaders/fragment.glsl'
@@ -71,6 +71,7 @@ export function VolumeShader() {
     meshRef.current.material.uniforms.cameraPos.value.copy(camera.position)
   })
   return (
+  <group position={[0,1.01,0]}>
   <mesh ref={meshRef}>
     <boxGeometry args={[2, 2, 2]} />
     <shaderMaterial
@@ -82,7 +83,7 @@ export function VolumeShader() {
           cameraPos: { value: new THREE.Vector3() },
           threshold: { value: threshold },
           steps: { value: 200 },
-          scale: {value: 1},
+          scale: {value: 2},
           flip: {value: false},
           cmap: {value: texture}
         },
@@ -92,5 +93,10 @@ export function VolumeShader() {
       }]}
     />
   </mesh>
+  <mesh castShadow>
+    <boxGeometry args={[2, 2, 2]} />
+    <meshStandardMaterial transparent color={'red'} visible={false} />
+  </mesh>
+  </group>
   )
 }
