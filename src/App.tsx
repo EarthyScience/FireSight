@@ -1,6 +1,5 @@
 import { Navbar, Footer, CanvasGeometry, } from './components';
 import Overlays from "./components/Overlays";
-import { Perf } from 'r3f-perf';
 import './App.css'
 export function App() {
   return (
