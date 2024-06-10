@@ -22,18 +22,18 @@ interface UseSliderBladeParams<T> extends BaseBladeParams {
   view?: 'list'
 }
 
-export function useListBlade<T extends Object, V>(
+export function useListBlade<T extends object, V>(
   paneRef: MutableRefObject<PaneInstance<T>>,
   bladeParams: UseSliderBladeParams<V>
 ): [V, (value: V) => void, MutableRefObject<ListBladeApi<V>>]
 
-export function useListBlade<T extends Object, V>(
+export function useListBlade<T extends object, V>(
   paneRef: MutableRefObject<PaneInstance<T>>,
   bladeParams: UseSliderBladeParams<V>,
   onChange: (event: TpChangeEvent<V>) => void
 ): [never, (value: V) => void, MutableRefObject<ListBladeApi<V>>]
 
-export function useListBlade<T extends Object, V>(
+export function useListBlade<T extends object, V>(
   paneRef: MutableRefObject<PaneInstance<T>>,
   params: UseSliderBladeParams<V>,
   onChange?: (event: TpChangeEvent<V>) => void

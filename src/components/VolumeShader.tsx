@@ -1,14 +1,13 @@
 import * as THREE from 'three';
 import { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
-import { Center } from '@react-three/drei';
 // import { shaderMaterial } from '@react-three/drei';
 import vertexShader from '../utils/shaders/vertex.glsl'
 import fragmentShader from '../utils/shaders/fragment.glsl'
 
-import { setPalette, valuetoCmap} from '../utils/colormap'
+import { createTexture} from '../utils/colormap'
 import {
-  // useListBlade,
+  useListBlade,
   // usePaneFolder,
   // usePaneInput,
   useSliderBlade,
@@ -16,30 +15,13 @@ import {
   useTweakpane,
 } from '../../pane'
 
-
-const unitInterval = Array.from({ length: 255 }, (_, index) => index / 254);
-const cmap = setPalette({ mn: 0, mx: 1 });
-const dataColor = unitInterval.map(value => valuetoCmap({ cmap, value }));
-
-const colData = new Uint8Array(dataColor.length * 4);
-for (var i = 0; i < dataColor.length; i++) {
-  const {r, g, b} = dataColor[i].color
-  colData[i * 4] = r*255;
-  colData[i * 4 + 1] = g*255;
-  colData[i * 4 + 2] = b*255;
-  colData[i * 4 + 3] = 255; // 255
-}
-const texture = new THREE.DataTexture(colData, dataColor.length, 1, THREE.RGBAFormat);
-texture.needsUpdate = true;
-// console.log(dataColor.length)
-
-
 const volData = new Uint8Array( 100 * 100 * 100 );
 for ( let x = 0; x < 1000000; x ++ ) {
   volData[ x ] = Math.random()*255;
 }
 
 const volTexture = new THREE.Data3DTexture(volData, 100, 100, 100)
+
 volTexture.format = THREE.RedFormat;
 volTexture.minFilter = THREE.NearestFilter;
 volTexture.magFilter = THREE.NearestFilter;
@@ -66,6 +48,31 @@ export function VolumeShader() {
     step: 0.01,
     format: (value) => value.toFixed(2),
   })
+  // List blade
+// const cmap_texture = createTexture('blackbody')
+const [cmap_texture] = useListBlade(pane, {
+  label: 'colormap',
+  options: [
+    {
+      text: 'blackbody',
+      value: createTexture('blackbody'),
+    },
+    {
+      text: 'rainbow',
+      value: createTexture('rainbow'),
+    },
+    {
+      text: 'cooltowarm',
+      value: createTexture('cooltowarm'),
+    },
+    {
+      text: 'grayscale',
+      value: createTexture('grayscale'),
+    },
+  ],
+  value: null //  calling createTexture('blackbody') creates a huhe lag here!
+})
+
   const meshRef = useRef()
   useFrame(({ camera }) => {
     meshRef.current.material.uniforms.cameraPos.value.copy(camera.position)
@@ -85,7 +92,7 @@ export function VolumeShader() {
           steps: { value: 200 },
           scale: {value: 2},
           flip: {value: false},
-          cmap: {value: texture}
+          cmap: {value: cmap_texture}
         },
         vertexShader,
         fragmentShader,
