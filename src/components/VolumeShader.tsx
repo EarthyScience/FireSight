@@ -5,7 +5,9 @@ import { useFrame } from '@react-three/fiber';
 import vertexShader from '../utils/shaders/vertex.glsl'
 import fragmentShader from '../utils/shaders/fragment.glsl'
 
-import { createTexture} from '../utils/colormap'
+import { createTexture, genRand} from '../utils/colormap'
+import { newVarData } from '../utils/volTexture';
+
 import {
   useListBlade,
   // usePaneFolder,
@@ -15,18 +17,8 @@ import {
   useTweakpane,
 } from '../../pane'
 
-const volData = new Uint8Array( 100 * 100 * 100 );
-for ( let x = 0; x < 1000000; x ++ ) {
-  volData[ x ] = Math.random()*255;
-}
-
-const volTexture = new THREE.Data3DTexture(volData, 100, 100, 100)
-
-volTexture.format = THREE.RedFormat;
-volTexture.minFilter = THREE.NearestFilter;
-volTexture.magFilter = THREE.NearestFilter;
-volTexture.unpackAlignment = 1;
-volTexture.needsUpdate = true;
+const varValues = genRand(1_000_000); // synthetic data, from 0 to 1.
+const volTexture = newVarData(varValues);
 
 // console.log(volTexture)
 export function VolumeShader() {
