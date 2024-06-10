@@ -8,14 +8,29 @@ import fragmentShader from '../utils/shaders/fragment.glsl'
 import { createTexture, genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
 
-import { Vars_1D } from '../../public/variables.json'
-// const parsedOptions = JSON.parse(Vars_1D);
+import { Vars_1D, Vars_2D, Vars_3D } from '../utils/variables_test.json'
 console.log(Vars_1D)
 
-// const myOptions = Vars_1D.map(option => ({
-//   text: option.text,
-//   value: option.value
-// }));
+const options1D = Vars_1D.map((element) => {
+  return {
+      text: element,
+      value: element
+  };
+});
+
+const options2D = Vars_2D.map((element) => {
+  return {
+      text: element,
+      value: element
+  };
+});
+
+const options3D = Vars_3D.map((element) => {
+  return {
+      text: element,
+      value: element
+  };
+});
 
 
 import {
@@ -81,43 +96,21 @@ const folder = usePaneFolder(pane, {
 
 const [drei_var] = useListBlade(folder, {
   label: '3D',
-  options: [
-    {
-      text: 'test1',
-      value: 'test1',
-    },
-    {
-      text: 'test2',
-      value: 'test2',
-    },
-  ],
+  options: options3D,
   value: 'test1'
 })
 
 const [twod_var] = useListBlade(folder, {
   label: '2D',
-  options: [
-    {
-      text: 'test1',
-      value: 'test1',
-    },
-    {
-      text: 'test2',
-      value: 'test2',
-    },
-  ],
+  options: options2D,
   value: 'test1'
 })
 
-// const [one_var] = useListBlade(folder, {
-//   label: '1D',
-//   options: myOptions,
-//   value: 'test1'
-// })
-
-// const [pos] = usePaneInput(folder, 'position')
-// const [rotation] = usePaneInput(folder, 'rotation')
-// const [scale] = usePaneInput(folder, 'scale')
+const [one_var] = useListBlade(folder, {
+  label: '1D',
+  options: options1D,
+  value: 'test1'
+})
 
   const meshRef = useRef()
   useFrame(({ camera }) => {
