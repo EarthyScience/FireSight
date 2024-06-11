@@ -10,6 +10,7 @@ import { newVarData } from '../utils/volTexture';
 
 import { Vars_1D, Vars_2D, Vars_3D } from '../utils/variables.json'
 // console.log(Vars_1D)
+import { meta } from './Zarr';
 
 const options1D = Vars_1D.map((element) => {
   return {
@@ -67,32 +68,33 @@ export function VolumeShader() {
   })
   // List blade
 // const cmap_texture = createTexture('blackbody')
-const [cmap_texture] = useListBlade(pane, {
+const [cmap_texture_name] = useListBlade(pane, {
   label: 'colormap',
   options: [
     {
       text: 'blackbody',
-      value: createTexture('blackbody')
+      value: 'blackbody'
     },
     {
       text: 'rainbow',
-      value: createTexture('rainbow')
+      value: 'rainbow'
     },
     {
       text: 'cooltowarm',
-      value: createTexture('cooltowarm')
+      value: 'cooltowarm'
     },
     {
       text: 'grayscale',
-      value: createTexture('grayscale')
+      value: 'grayscale'
     },
   ],
-  value: null //  calling createTexture('blackbody') creates a huhe lag here!
+  value: 'blackbody'
 })
 
 // const folder = usePaneFolder(pane, {
 //   title: 'Variables',
 // })
+const cmap_texture =  createTexture(cmap_texture_name)
 
 const [drei_var] = useListBlade(pane, {
   label: '3D',
