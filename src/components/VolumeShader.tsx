@@ -8,7 +8,7 @@ import fragmentShader from '../utils/shaders/fragment.glsl'
 import { createTexture, genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
 
-import { Vars_1D, Vars_2D, Vars_3D } from '../utils/variables_test.json'
+import { Vars_1D, Vars_2D, Vars_3D } from '../utils/variables.json'
 console.log(Vars_1D)
 
 const options1D = Vars_1D.map((element) => {
