@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { useFrame } from '@react-three/fiber';
 // import { shaderMaterial } from '@react-three/drei';
 import vertexShader from '../utils/shaders/vertex.glsl'
@@ -9,7 +9,7 @@ import { createTexture, genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
 
 import { Vars_1D, Vars_2D, Vars_3D } from '../utils/variables.json'
-// console.log(Vars_1D)
+console.log(Vars_1D)
 import { meta } from './Zarr';
 
 const options1D = Vars_1D.map((element) => {
@@ -48,7 +48,7 @@ const volTexture = newVarData(varValues);
 
 // console.log(volTexture)
 export function VolumeShader() {
-  const containerElement = document.getElementById('myPane');
+  // const containerElement = document.getElementById('myPane');
   const pane = useTweakpane(
     {
       threshold: 0.0,
@@ -56,9 +56,43 @@ export function VolumeShader() {
       vName: 'cams_co2fire',
     },
     {
-      container: containerElement,
+      container: document.getElementById('myPane')
     }
   )
+  useEffect(() => {
+    const container = document.getElementById('myPane');
+
+    if (container) {
+      container.style.position = 'absolute'; // Set position to absolute for dragging
+      container.style.cursor = 'move'; // Change cursor to move
+      container.style.transition = 'left 0.3s ease, top 0.3s ease'; // Add CSS transitions for smooth movement
+
+      let offsetX = 0;
+      let offsetY = 0;
+
+      container.setAttribute('draggable', 'true');
+
+      container.addEventListener('dragstart', function(event) {
+        offsetX = event.clientX - container.getBoundingClientRect().left;
+        offsetY = event.clientY - container.getBoundingClientRect().top;
+        event.dataTransfer.setData('text/plain', ''); // Required for Firefox
+      });
+
+      document.body.addEventListener('dragover', function(event) {
+        event.preventDefault();
+      });
+
+      document.body.addEventListener('drop', function(event) {
+        event.preventDefault();
+        const dropX = event.clientX - offsetX;
+        const dropY = event.clientY - offsetY;
+        container.style.left = `${dropX}px`;
+        container.style.top = `${dropY}px`;
+      });
+    }
+  }, []);
+
+
   const folderGeo = usePaneFolder(pane, {
     title: 'Geometry Settings',
   })
