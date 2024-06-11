@@ -10,6 +10,7 @@ import { newVarData } from '../utils/volTexture';
 
 import { Vars_1D, Vars_2D, Vars_3D } from '../utils/variables.json'
 // console.log(Vars_1D)
+import { meta } from './Zarr';
 
 const options1D = Vars_1D.map((element) => {
   return {
@@ -34,10 +35,10 @@ const options3D = Vars_3D.map((element) => {
 
 
 import {
-  useListBlade,
+  // useListBlade,
   usePaneFolder,
-  // usePaneInput,
-  useSliderBlade,
+  usePaneInput,
+  // useSliderBlade,
   // useTextBlade,
   useTweakpane,
 } from '../../pane'
@@ -51,13 +52,18 @@ export function VolumeShader({data}) {
   const pane = useTweakpane(
     {
       threshold: 0.0,
+      cmap: 'blackbody',
+      vName: 'cams_co2fire',
     },
     {
-      title: 'Geometry Settings',
       container: containerElement,
     }
   )
-  const [threshold] = useSliderBlade(pane, {
+  const folderGeo = usePaneFolder(pane, {
+    title: 'Geometry Settings',
+  })
+
+  const [threshold] = usePaneInput(folderGeo, 'threshold', {
     label: 'threshold',
     value: 0.0,
     min: 0,
@@ -67,50 +73,51 @@ export function VolumeShader({data}) {
   })
   // List blade
 // const cmap_texture = createTexture('blackbody')
-
-const [cmap_texture] = useListBlade(pane, {
+const [cmap_texture_name] = usePaneInput(folderGeo, 'cmap', {
   label: 'colormap',
   options: [
     {
       text: 'blackbody',
-      value: createTexture('blackbody')
+      value: 'blackbody'
     },
     {
       text: 'rainbow',
-      value: createTexture('rainbow')
+      value: 'rainbow'
     },
     {
       text: 'cooltowarm',
-      value: createTexture('cooltowarm')
+      value: 'cooltowarm'
     },
     {
       text: 'grayscale',
-      value: createTexture('grayscale')
+      value: 'grayscale'
     },
   ],
-  value: null //  calling createTexture('blackbody') creates a huhe lag here!
+  value: 'blackbody'
 })
 
-// const folder = usePaneFolder(pane, {
-//   title: 'Variables',
-// })
+const cmap_texture =  createTexture(cmap_texture_name)
 
-const [drei_var] = useListBlade(pane, {
+const folderVars = usePaneFolder(pane, {
+  title: 'Variables',
+})
+
+const [drei_var] = usePaneInput(folderVars, 'vName', {
   label: '3D',
   options: options3D,
-  value: 'test1'
+  value: 't2m'
 })
 
-const [twod_var] = useListBlade(pane, {
+const [twod_var] = usePaneInput(folderVars, 'vName', {
   label: '2D',
   options: options2D,
-  value: 'test1'
+  value: null
 })
 
-const [one_var] = useListBlade(pane, {
+const [one_var] = usePaneInput(folderVars, 'vName', {
   label: '1D',
   options: options1D,
-  value: 'test1'
+  value: null
 })
 
   const meshRef = useRef()
