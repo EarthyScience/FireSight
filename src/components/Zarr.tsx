@@ -1,5 +1,5 @@
 import { HTTPStore, openArray, slice } from "zarr";
-const url = 'http://localhost:5173/SeasFireCube_v3.zarr'
+const url = 'http://localhost:5173/Datasets/seasfire.zarr'
 
 // fetch the metadata 
 export const meta = await fetch(url + '/.zgroup').then(res => res.json());
