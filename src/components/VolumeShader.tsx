@@ -9,7 +9,7 @@ import { createTexture, genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
 
 import { Vars_1D, Vars_2D, Vars_3D } from '../utils/variables.json'
-console.log(Vars_1D)
+// console.log(Vars_1D)
 
 const options1D = Vars_1D.map((element) => {
   return {
@@ -90,23 +90,23 @@ const [cmap_texture] = useListBlade(pane, {
   value: null //  calling createTexture('blackbody') creates a huhe lag here!
 })
 
-const folder = usePaneFolder(pane, {
-  title: 'Variables',
-})
+// const folder = usePaneFolder(pane, {
+//   title: 'Variables',
+// })
 
-const [drei_var] = useListBlade(folder, {
+const [drei_var] = useListBlade(pane, {
   label: '3D',
   options: options3D,
   value: 'test1'
 })
 
-const [twod_var] = useListBlade(folder, {
+const [twod_var] = useListBlade(pane, {
   label: '2D',
   options: options2D,
   value: 'test1'
 })
 
-const [one_var] = useListBlade(folder, {
+const [one_var] = useListBlade(pane, {
   label: '1D',
   options: options1D,
   value: 'test1'
