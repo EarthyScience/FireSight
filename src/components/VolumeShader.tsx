@@ -7,12 +7,12 @@ import fragmentShader from '../utils/shaders/fragment.glsl'
 import ZarrLoader from './ZarrLoader';
 import { createTexture, genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
-import { useControls } from 'leva';
+// import { useControls } from 'leva';
 
 
 import { Vars_1D, Vars_2D, Vars_3D } from '../utils/variables.json'
 // console.log(Vars_1D)
-import { meta } from './Zarr';
+// import { meta } from './Zarr';
 
 const options1D = Vars_1D.map((element) => {
   return {
