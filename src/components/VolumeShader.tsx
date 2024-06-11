@@ -8,9 +8,34 @@ import fragmentShader from '../utils/shaders/fragment.glsl'
 import { createTexture, genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
 
+import { Vars_1D, Vars_2D, Vars_3D } from '../utils/variables.json'
+// console.log(Vars_1D)
+
+const options1D = Vars_1D.map((element) => {
+  return {
+      text: element,
+      value: element
+  };
+});
+
+const options2D = Vars_2D.map((element) => {
+  return {
+      text: element,
+      value: element
+  };
+});
+
+const options3D = Vars_3D.map((element) => {
+  return {
+      text: element,
+      value: element
+  };
+});
+
+
 import {
   useListBlade,
-  // usePaneFolder,
+  usePaneFolder,
   // usePaneInput,
   useSliderBlade,
   // useTextBlade,
@@ -47,22 +72,44 @@ const [cmap_texture] = useListBlade(pane, {
   options: [
     {
       text: 'blackbody',
-      value: createTexture('blackbody'),
+      value: createTexture('blackbody')
     },
     {
       text: 'rainbow',
-      value: createTexture('rainbow'),
+      value: createTexture('rainbow')
     },
     {
       text: 'cooltowarm',
-      value: createTexture('cooltowarm'),
+      value: createTexture('cooltowarm')
     },
     {
       text: 'grayscale',
-      value: createTexture('grayscale'),
+      value: createTexture('grayscale')
     },
   ],
   value: null //  calling createTexture('blackbody') creates a huhe lag here!
+})
+
+// const folder = usePaneFolder(pane, {
+//   title: 'Variables',
+// })
+
+const [drei_var] = useListBlade(pane, {
+  label: '3D',
+  options: options3D,
+  value: 'test1'
+})
+
+const [twod_var] = useListBlade(pane, {
+  label: '2D',
+  options: options2D,
+  value: 'test1'
+})
+
+const [one_var] = useListBlade(pane, {
+  label: '1D',
+  options: options1D,
+  value: 'test1'
 })
 
   const meshRef = useRef()

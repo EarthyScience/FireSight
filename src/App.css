@@ -4,9 +4,9 @@ html, body, #root {
     padding: 0;
   }
 .pane {
-  position: fixed;
-  top: 10%;
-  left: 20%;
-  transform: translate(-30%, -50%);
+  position: absolute;
+  top: 20%;
+  left: 3%;
+  /* transform: translate(-30%, -50%); */
   z-index: 10;
 }
