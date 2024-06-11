@@ -4,7 +4,7 @@ import { useFrame } from '@react-three/fiber';
 // import { shaderMaterial } from '@react-three/drei';
 import vertexShader from '../utils/shaders/vertex.glsl'
 import fragmentShader from '../utils/shaders/fragment.glsl'
-
+import ZarrLoader from './ZarrLoader';
 import { createTexture, genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
 
@@ -46,7 +46,7 @@ const varValues = genRand(1_000_000); // synthetic data, from 0 to 1.
 const volTexture = newVarData(varValues);
 
 // console.log(volTexture)
-export function VolumeShader() {
+export function VolumeShader({data}) {
   const containerElement = document.getElementById('myPane');
   const pane = useTweakpane(
     {
@@ -67,6 +67,7 @@ export function VolumeShader() {
   })
   // List blade
 // const cmap_texture = createTexture('blackbody')
+
 const [cmap_texture] = useListBlade(pane, {
   label: 'colormap',
   options: [
@@ -139,6 +140,7 @@ const [one_var] = useListBlade(pane, {
       }]}
     />
   </mesh>
+  <ZarrLoader variable={drei_var}/>
   <mesh castShadow>
     <boxGeometry args={[2, 2, 2]} />
     <meshStandardMaterial transparent color={'red'} visible={false} />
