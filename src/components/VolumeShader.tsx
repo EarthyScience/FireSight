@@ -8,9 +8,19 @@ import fragmentShader from '../utils/shaders/fragment.glsl'
 import { createTexture, genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
 
+import { Vars_1D } from '../../public/variables.json'
+// const parsedOptions = JSON.parse(Vars_1D);
+console.log(Vars_1D)
+
+// const myOptions = Vars_1D.map(option => ({
+//   text: option.text,
+//   value: option.value
+// }));
+
+
 import {
   useListBlade,
-  // usePaneFolder,
+  usePaneFolder,
   // usePaneInput,
   useSliderBlade,
   // useTextBlade,
@@ -47,23 +57,67 @@ const [cmap_texture] = useListBlade(pane, {
   options: [
     {
       text: 'blackbody',
-      value: createTexture('blackbody'),
+      value: createTexture('blackbody')
     },
     {
       text: 'rainbow',
-      value: createTexture('rainbow'),
+      value: createTexture('rainbow')
     },
     {
       text: 'cooltowarm',
-      value: createTexture('cooltowarm'),
+      value: createTexture('cooltowarm')
     },
     {
       text: 'grayscale',
-      value: createTexture('grayscale'),
+      value: createTexture('grayscale')
     },
   ],
   value: null //  calling createTexture('blackbody') creates a huhe lag here!
 })
+
+const folder = usePaneFolder(pane, {
+  title: 'Variables',
+})
+
+const [drei_var] = useListBlade(folder, {
+  label: '3D',
+  options: [
+    {
+      text: 'test1',
+      value: 'test1',
+    },
+    {
+      text: 'test2',
+      value: 'test2',
+    },
+  ],
+  value: 'test1'
+})
+
+const [twod_var] = useListBlade(folder, {
+  label: '2D',
+  options: [
+    {
+      text: 'test1',
+      value: 'test1',
+    },
+    {
+      text: 'test2',
+      value: 'test2',
+    },
+  ],
+  value: 'test1'
+})
+
+// const [one_var] = useListBlade(folder, {
+//   label: '1D',
+//   options: myOptions,
+//   value: 'test1'
+// })
+
+// const [pos] = usePaneInput(folder, 'position')
+// const [rotation] = usePaneInput(folder, 'rotation')
+// const [scale] = usePaneInput(folder, 'scale')
 
   const meshRef = useRef()
   useFrame(({ camera }) => {
