@@ -134,7 +134,6 @@ export function VolumeShader({data}) {
 
   useEffect(()=>{
     if (!volumeData){return;}
-    console.log(volumeData)
     const newText = newVarData(volumeData)
     setVolumeText(newText)
   },[volumeData])
