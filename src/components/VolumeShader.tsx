@@ -53,9 +53,7 @@ export function VolumeShader() {
     {
       threshold: 0.0,
       cmap: 'blackbody',
-      vName3d: 'cams_co2fire',
-      vName2d: 'area',
-      vName1d: 'fcci_ba_valid_mask',
+      vName: 'cams_co2fire',
     },
     {
       container: containerElement,
@@ -104,22 +102,22 @@ const folderVars = usePaneFolder(pane, {
   title: 'Variables',
 })
 
-const [drei_var] = usePaneInput(folderVars, 'vName3d', {
+const [drei_var] = usePaneInput(folderVars, 'vName', {
   label: '3D',
   options: options3D,
-  value: 'test1'
+  value: 't2m'
 })
 
-const [twod_var] = usePaneInput(folderVars, 'vName2d', {
+const [twod_var] = usePaneInput(folderVars, 'vName', {
   label: '2D',
   options: options2D,
-  value: 'test1'
+  value: null
 })
 
-const [one_var] = usePaneInput(folderVars, 'vName1d', {
+const [one_var] = usePaneInput(folderVars, 'vName', {
   label: '1D',
   options: options1D,
-  value: 'test1'
+  value: null
 })
 
   const meshRef = useRef()
