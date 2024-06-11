@@ -6,7 +6,6 @@ export function newVarData(varValues, lx=100, ly=100, lz=100) {
     for ( let i = 0; i < varLength; i ++ ) {
       volData[ i ] = varValues[i] *255; // Normalized data from 0 to 1
     }
-    
     const volTexture = new THREE.Data3DTexture(volData, lx, ly, lz)
     
     volTexture.format = THREE.RedFormat;

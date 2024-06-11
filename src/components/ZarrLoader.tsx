@@ -1,28 +1,25 @@
 import React, { useEffect, useState } from 'react'
 
-import { HTTPStore, openArray, slice } from "zarr";
+import { HTTPStore, openArray } from "zarr";
 
-const ZarrLoader = ({variable,setter,slice}) => {
-  const [store, setStore] = useState()
-  console.log(variable)
+import {slice as zarrSlice}  from "zarr";
+
+const ZarrLoader = ({variable,setData,slice}) => {
   useEffect(()=>{
     if (!variable){return}
-    console.log(variable)
-    let data = null
     const store = new HTTPStore('http://localhost:5173/Datasets/seasfire.zarr')
-    const z = openArray({ store: store, path: 'cams_co2fire' }).then(
-      (e)=>e.get(0).then((d)=>{
-        data = d;
-        console.log(data)}
-      }
+    openArray({ store: store, path: variable })
+      .then((zarrArray) => {
+        return zarrArray.get([zarrSlice(0,100), zarrSlice(500,600),zarrSlice(500,600)]);
+      })
+      .then((data) => {
+        // You can assign the data to a variable here
+        setData(data.flatten())
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
-        
-      )
-
-      }
-
-    
-    )
   },[variable])
 
   return (
