@@ -7,18 +7,19 @@ html, body, #root {
   position: absolute;
   top: 20%;
   left: 3%;
-  /* transform: translate(-30%, -50%); */
   z-index: 10;
 }
 
 .drag-handle {
-  width: 100%;
-  height: 20px;
-  background: lightgray;
-  cursor: grab;
   position: absolute;
-  top: -5%;
-  left: 0;
-  right: 0;
-  z-index: -1; /* Ensure it's above other elements */
+  width: 20px; /* Set width of the handle */
+  height: 20px; /* Set height of the handle */
+  background-color: rgb(241, 49, 90);
+  cursor: grab;
+  border-radius: 50%; 
+}
+
+.top-left {
+  top: -10px; /* Adjust the position of the handle */
+  left: -10px; /* Adjust the position of the handle */
 }
