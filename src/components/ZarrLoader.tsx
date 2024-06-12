@@ -10,7 +10,7 @@ const ZarrLoader = ({variable,setData,slice}) => {
     const store = new HTTPStore('http://localhost:5173/Datasets/seasfire.zarr')
     openArray({ store: store, path: variable })
       .then((zarrArray) => {
-        return zarrArray.get([zarrSlice(0,5), null,null]);
+        return zarrArray.get([zarrSlice(0,5), zarrSlice(200,400),null]); //Dims are Z,Y,X
       })
       .then((data) => {
         // You can assign the data to a variable here

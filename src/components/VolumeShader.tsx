@@ -61,7 +61,7 @@ export function VolumeShader({data}) {
     {
       threshold: 0.0,
       cmap: 'blackbody',
-      vName: 'cams_co2fire',
+      vName: 'vpd',
     },
     {
       title: 'Controls',
@@ -170,14 +170,14 @@ export function VolumeShader({data}) {
 
   useEffect(()=>{
     if (!volumeData){return;}
-    const [newText, newShape] = newVarData(volumeData)
-    console.log(newShape)
+    const [newText,newShape] = newVarData(volumeData) 
     setVolumeText(newText)
+    setVolumeShape(new THREE.Vector3(2,newShape[1]/newShape[2]*2,2)) //Dims are Z,Y,X
   },[volumeData])
 
   return (
   <group position={[0,1.01,0]}>
-  <mesh ref={meshRef}>
+  <mesh ref={meshRef} rotation-y={Math.PI}>
     <boxGeometry args={[2, 2, 2]} />
     <shaderMaterial
       attach="material"
@@ -188,7 +188,7 @@ export function VolumeShader({data}) {
           cameraPos: { value: new THREE.Vector3() },
           threshold: { value: threshold },
           steps: { value: 200 },
-          scale: {value: 1},
+          scale: {value: volumeShape},
           flip: {value: false},
           cmap: {value: cmap_texture}
         },
@@ -202,7 +202,7 @@ export function VolumeShader({data}) {
   <ZarrLoader variable={drei_var} setData={setVolumeData}/>
   </Suspense>
   <mesh castShadow>
-    <boxGeometry args={[2, 2, 2]} />
+    <boxGeometry args={[volumeShape.x, volumeShape.y, volumeShape.z]} />
     <meshStandardMaterial transparent color={'red'} visible={false} />
   </mesh>
   </group>

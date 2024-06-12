@@ -13,7 +13,7 @@ out vec4 color;
 uniform sampler3D map;
 uniform sampler2D cmap;
 
-uniform float scale;
+uniform vec3 scale;
 uniform float threshold;
 uniform float steps;
 uniform bool flip;
