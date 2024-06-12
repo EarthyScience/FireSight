@@ -54,6 +54,8 @@ export function VolumeShader({data}) {
   const [volumeText, setVolumeText] = useState(volTexture)
   const [volumeData, setVolumeData] = useState(null)
 
+  const [volumeShape, setVolumeShape] = useState(new THREE.Vector3(1,1,1))
+
   const container = document.getElementById('myPane');
   const pane = useTweakpane(
     {
@@ -168,7 +170,8 @@ export function VolumeShader({data}) {
 
   useEffect(()=>{
     if (!volumeData){return;}
-    const newText = newVarData(volumeData)
+    const [newText, newShape] = newVarData(volumeData)
+    console.log(newShape)
     setVolumeText(newText)
   },[volumeData])
 
@@ -185,7 +188,7 @@ export function VolumeShader({data}) {
           cameraPos: { value: new THREE.Vector3() },
           threshold: { value: threshold },
           steps: { value: 200 },
-          scale: {value: 2},
+          scale: {value: 1},
           flip: {value: false},
           cmap: {value: cmap_texture}
         },
