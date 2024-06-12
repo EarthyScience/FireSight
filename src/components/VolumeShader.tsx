@@ -7,12 +7,12 @@ import fragmentShader from '../utils/shaders/fragment.glsl'
 import ZarrLoader from './ZarrLoader';
 import { createTexture, genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
-import { useControls } from 'leva';
+// import { useControls } from 'leva';
 
 
 import { Vars_1D, Vars_2D, Vars_3D } from '../utils/variables.json'
 // console.log(Vars_1D)
-import { meta } from './Zarr';
+// import { meta } from './Zarr';
 
 const options1D = Vars_1D.map((element) => {
   return {
@@ -54,7 +54,7 @@ export function VolumeShader({data}) {
   const [volumeText, setVolumeText] = useState(volTexture)
   const [volumeData, setVolumeData] = useState(null)
 
-  const containerElement = document.getElementById('myPane');
+  const container = document.getElementById('myPane');
   const pane = useTweakpane(
     {
       threshold: 0.0,
@@ -62,9 +62,43 @@ export function VolumeShader({data}) {
       vName: 'cams_co2fire',
     },
     {
-      container: containerElement,
+      title: 'Controls',
+      container: container,
     }
   )
+  useEffect(() => {
+    const container = document.getElementById('myPane');
+  
+    if (container) {
+      container.style.position = 'absolute'; // Set position to absolute for dragging
+      container.style.cursor = 'move'; // Change cursor to move
+  
+      let offsetX = 0;
+      let offsetY = 0;
+      let isDragging = false;
+      // TODO: Only drag from titles
+      container.addEventListener('mousedown', function(event) {
+        offsetX = event.clientX - container.getBoundingClientRect().left;
+        offsetY = event.clientY - container.getBoundingClientRect().top;
+        isDragging = true;
+      });
+  
+      document.body.addEventListener('mousemove', function(event) {
+        if (isDragging) {
+          event.preventDefault();
+          const moveX = event.clientX - offsetX;
+          const moveY = event.clientY - offsetY;
+          container.style.left = `${moveX}px`;
+          container.style.top = `${moveY}px`;
+        }
+      });
+  
+      document.body.addEventListener('mouseup', function(event) {
+        isDragging = false;
+      });
+    }
+  }, []);
+
   const folderGeo = usePaneFolder(pane, {
     title: 'Geometry Settings',
   })
