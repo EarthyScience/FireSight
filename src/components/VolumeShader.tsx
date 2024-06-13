@@ -68,38 +68,6 @@ export function VolumeShader({data}) {
       container: container,
     }
   )
-  useEffect(() => {
-    const container = document.getElementById('myPane');
-  
-    if (container) {
-      container.style.position = 'absolute'; // Set position to absolute for dragging
-      container.style.cursor = 'move'; // Change cursor to move
-  
-      let offsetX = 0;
-      let offsetY = 0;
-      let isDragging = false;
-      // TODO: Only drag from titles
-      container.addEventListener('mousedown', function(event) {
-        offsetX = event.clientX - container.getBoundingClientRect().left;
-        offsetY = event.clientY - container.getBoundingClientRect().top;
-        isDragging = true;
-      });
-  
-      document.body.addEventListener('mousemove', function(event) {
-        if (isDragging) {
-          event.preventDefault();
-          const moveX = event.clientX - offsetX;
-          const moveY = event.clientY - offsetY;
-          container.style.left = `${moveX}px`;
-          container.style.top = `${moveY}px`;
-        }
-      });
-  
-      document.body.addEventListener('mouseup', function(event) {
-        isDragging = false;
-      });
-    }
-  }, []);
 
   const folderGeo = usePaneFolder(pane, {
     title: 'Geometry Settings',
@@ -147,7 +115,7 @@ export function VolumeShader({data}) {
   const [drei_var] = usePaneInput(folderVars, 'vName', {
     label: '3D',
     options: options3D,
-    value: 't2m'
+    value: 'vpd'
   })
   const [twod_var] = usePaneInput(folderVars, 'vName', {
     label: '2D',

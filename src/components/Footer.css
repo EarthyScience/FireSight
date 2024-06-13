@@ -1,5 +1,5 @@
 .footer {
-    color: var(--primary-text-color);
+    color: var(--accent-color2);
     z-index: 1;
     position: fixed;
     bottom: 0;

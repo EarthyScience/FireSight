@@ -6,6 +6,19 @@ using Random
 sds = open_dataset("./public/SeasFireCube_v3.zarr")
 ds = Zarr.zopen("./public/SeasFireCube_v3.zarr", consolidated=true)
 
+# ws10 = sds["ws10"]
+# ws10.chunks
+
+# dschunked = setchunks(ws10, Dict("Ti"=>46))
+
+# dschunked_all = setchunks(sds, Dict("Ti"=>46))
+#savedataset(dschunked_all, path=f, driver=:zarr)
+
+
+dschunked.chunks
+
+ws10_2 = sds["ws10"]
+
 ks = string.(keys(ds.arrays))
 ks = setdiff!(ks, ["time", "longitude", "latitude"])
 
