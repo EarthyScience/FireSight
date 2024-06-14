@@ -60,12 +60,38 @@ export function VolumeShader({data}) {
       value:12, min:1, max: 966, step:12
     }
   }
+  const xSlice = {
+    xStart:{
+      value:-2,min:-2,max:2,step:0.01},
+    xEnd:{
+      value:2,min:-2,max:2,step:0.01
+    }
+  }
+
+  const ySlice = {
+    yStart:{
+      value:-2,min:-2,max:2,step:0.01},
+    yEnd:{
+      value:2,min:-2,max:2,step:0.01
+    }
+  }
+
+  const zSlice = {
+    zStart:{
+      value:-2,min:-2,max:2,step:0.01},
+    zEnd:{
+      value:2,min:-2,max:2,step:0.01}
+  }
 
   const [meta, setMeta] = useState({})
   const timeControls = useControls('Time',timeSlice)
+  const xSlicer = useControls('X Slice', xSlice)
+  const ySlicer = useControls('Y Slice', ySlice)
+  const zSlicer = useControls('Z Slice', zSlice)
+
+
   const [volumeText, setVolumeText] = useState(volTexture)
   const [volumeData, setVolumeData] = useState(null)
-  console.log(meta)
   const [volumeShape, setVolumeShape] = useState(new THREE.Vector3(1,1,1))
 
 
@@ -171,7 +197,10 @@ export function VolumeShader({data}) {
           steps: { value: 200 },
           scale: {value: volumeShape},
           flip: {value: false},
-          cmap: {value: cmap_texture}
+          cmap: {value: cmap_texture},
+          flatBounds: {value: new THREE.Vector4(xSlicer.xStart,xSlicer.xEnd,zSlicer.zStart,zSlicer.zEnd)},
+          vertBounds: {value: new THREE.Vector2(ySlicer.yStart,ySlicer.yEnd)}
+
         },
         vertexShader,
         fragmentShader,

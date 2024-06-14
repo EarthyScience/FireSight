@@ -13,7 +13,7 @@ const ZarrLoader = ({variable,setData,setMeta,slice}) => {
 
     const store = new HTTPStore(baseURL)
     const fullPath = `${baseURL}/${variable}/.zattrs`;
-    const meta = fetch(fullPath)
+    fetch(fullPath)
       .then(res => res.json())
       .then(data=>{
         setMeta(data)
