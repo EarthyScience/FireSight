@@ -62,25 +62,25 @@ export function VolumeShader({data}) {
   }
   const xSlice = {
     xStart:{
-      value:-2,min:-2,max:2,step:0.01},
+      value:-1,min:-1,max:1,step:0.01},
     xEnd:{
-      value:2,min:-2,max:2,step:0.01
+      value:1,min:-1,max:1,step:0.01
     }
   }
 
   const ySlice = {
     yStart:{
-      value:-2,min:-2,max:2,step:0.01},
+      value:-1,min:-1,max:1,step:0.01},
     yEnd:{
-      value:2,min:-2,max:2,step:0.01
+      value:1,min:-1,max:1,step:0.01
     }
   }
 
   const zSlice = {
     zStart:{
-      value:-2,min:-2,max:2,step:0.01},
+      value:-1,min:-1,max:1,step:0.01},
     zEnd:{
-      value:2,min:-2,max:2,step:0.01}
+      value:1,min:-1,max:1,step:0.01}
   }
 
   const [meta, setMeta] = useState({})
@@ -186,6 +186,7 @@ export function VolumeShader({data}) {
   <group position={[0,1.01,0]}>
   <mesh ref={meshRef} rotation-y={Math.PI}>
     <boxGeometry args={[2, 2, 2]} />
+    {/* <icosahedronGeometry args={[2,8]} /> */}
     <shaderMaterial
       attach="material"
       args={[{

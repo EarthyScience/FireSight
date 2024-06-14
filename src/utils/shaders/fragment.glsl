@@ -54,11 +54,16 @@ void main(){
     delta /= steps;
 
     for ( float t = bounds.x; t < bounds.y; t += delta ) {
-        if (p.x > -1.*flatBounds.x || p.x < -1.*flatBounds.y){
+        if (p.x > -flatBounds.x || p.x < -flatBounds.y){
             p += rayDir * delta;
             continue;
         };
-        if (p.z > 0.){
+        if (-p.z > -flatBounds.z || -p.z < -flatBounds.w){
+            p += rayDir * delta;
+            continue;
+        };
+
+        if (p.y < vertBounds.x || p.y > vertBounds.y){
             p += rayDir * delta;
             continue;
         };
