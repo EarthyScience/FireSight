@@ -41,6 +41,7 @@ export function CanvasGeometry() {
             <RandomizedLight amount={8} radius={5} ambient={0.5} position={[5, 3, 2]} bias={0.001} />
           </AccumulativeShadows>
         <Environment preset='dawn' background backgroundBlurriness={0.5} />
+        <axesHelper scale={4}/>
       </Canvas>
     </div>
   )

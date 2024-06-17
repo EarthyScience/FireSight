@@ -7,12 +7,12 @@ import fragmentShader from '../utils/shaders/fragment.glsl'
 import ZarrLoader from './ZarrLoader';
 import { createTexture, genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
-// import { useControls } from 'leva';
+import { useControls } from 'leva';
 
 
 import { Vars_1D, Vars_2D, Vars_3D } from '../utils/variables.json'
 // console.log(Vars_1D)
-// import { meta } from './Zarr';
+
 
 const options1D = Vars_1D.map((element) => {
   return {
@@ -49,55 +49,65 @@ const varValues = genRand(1_000_000); // synthetic data, from 0 to 1.
 const volTexture = newVarData(varValues);
 
 // console.log(volTexture)
+
+
 export function VolumeShader({data}) {
+
+  const timeSlice = {
+    timeStart:{
+      value: 0, min: 0, max:965, step:12},
+    timeEnd:{
+      value:12, min:1, max: 966, step:12
+    }
+  }
+  const xSlice = {
+    xStart:{
+      value:-1,min:-1,max:1,step:0.01},
+    xEnd:{
+      value:1,min:-1,max:1,step:0.01
+    }
+  }
+
+  const ySlice = {
+    yStart:{
+      value:-1,min:-1,max:1,step:0.01},
+    yEnd:{
+      value:1,min:-1,max:1,step:0.01
+    }
+  }
+
+  const zSlice = {
+    zStart:{
+      value:-1,min:-1,max:1,step:0.01},
+    zEnd:{
+      value:1,min:-1,max:1,step:0.01}
+  }
+
+  const [meta, setMeta] = useState({})
+  const timeControls = useControls('Time',timeSlice)
+  const xSlicer = useControls('X Slice', xSlice)
+  const ySlicer = useControls('Y Slice', ySlice)
+  const zSlicer = useControls('Z Slice', zSlice)
+
 
   const [volumeText, setVolumeText] = useState(volTexture)
   const [volumeData, setVolumeData] = useState(null)
+  const [volumeShape, setVolumeShape] = useState(new THREE.Vector3(1,1,1))
+
 
   const container = document.getElementById('myPane');
   const pane = useTweakpane(
     {
       threshold: 0.0,
       cmap: 'blackbody',
-      vName: 'cams_co2fire',
+      vName: 'vpd',
     },
     {
       title: 'Controls',
       container: container,
     }
   )
-  useEffect(() => {
-    const container = document.getElementById('myPane');
-  
-    if (container) {
-      container.style.position = 'absolute'; // Set position to absolute for dragging
-      container.style.cursor = 'move'; // Change cursor to move
-  
-      let offsetX = 0;
-      let offsetY = 0;
-      let isDragging = false;
-      // TODO: Only drag from titles
-      container.addEventListener('mousedown', function(event) {
-        offsetX = event.clientX - container.getBoundingClientRect().left;
-        offsetY = event.clientY - container.getBoundingClientRect().top;
-        isDragging = true;
-      });
-  
-      document.body.addEventListener('mousemove', function(event) {
-        if (isDragging) {
-          event.preventDefault();
-          const moveX = event.clientX - offsetX;
-          const moveY = event.clientY - offsetY;
-          container.style.left = `${moveX}px`;
-          container.style.top = `${moveY}px`;
-        }
-      });
-  
-      document.body.addEventListener('mouseup', function(event) {
-        isDragging = false;
-      });
-    }
-  }, []);
+
 
   const folderGeo = usePaneFolder(pane, {
     title: 'Geometry Settings',
@@ -137,7 +147,6 @@ export function VolumeShader({data}) {
   })
 
   const cmap_texture =  createTexture(cmap_texture_name)
-
   const folderVars = usePaneFolder(pane, {
     title: 'Variables',
   })
@@ -168,14 +177,16 @@ export function VolumeShader({data}) {
 
   useEffect(()=>{
     if (!volumeData){return;}
-    const newText = newVarData(volumeData)
+    const [newText,newShape] = newVarData(volumeData) 
     setVolumeText(newText)
+    setVolumeShape(new THREE.Vector3(2,newShape[1]/newShape[2]*2,2)) //Dims are Z,Y,X
   },[volumeData])
 
   return (
   <group position={[0,1.01,0]}>
-  <mesh ref={meshRef}>
+  <mesh ref={meshRef} rotation-y={Math.PI}>
     <boxGeometry args={[2, 2, 2]} />
+    {/* <icosahedronGeometry args={[2,8]} /> */}
     <shaderMaterial
       attach="material"
       args={[{
@@ -185,9 +196,12 @@ export function VolumeShader({data}) {
           cameraPos: { value: new THREE.Vector3() },
           threshold: { value: threshold },
           steps: { value: 200 },
-          scale: {value: 2},
+          scale: {value: volumeShape},
           flip: {value: false},
-          cmap: {value: cmap_texture}
+          cmap: {value: cmap_texture},
+          flatBounds: {value: new THREE.Vector4(xSlicer.xStart,xSlicer.xEnd,zSlicer.zStart,zSlicer.zEnd)},
+          vertBounds: {value: new THREE.Vector2(ySlicer.yStart,ySlicer.yEnd)}
+
         },
         vertexShader,
         fragmentShader,
@@ -196,10 +210,10 @@ export function VolumeShader({data}) {
     />
   </mesh>
   <Suspense>
-  <ZarrLoader variable={drei_var} setData={setVolumeData}/>
+  <ZarrLoader variable={drei_var} setData={setVolumeData} slice={timeControls} setMeta={setMeta}/>
   </Suspense>
   <mesh castShadow>
-    <boxGeometry args={[2, 2, 2]} />
+    <boxGeometry args={[volumeShape.x, volumeShape.y, volumeShape.z]} />
     <meshStandardMaterial transparent color={'red'} visible={false} />
   </mesh>
   </group>
