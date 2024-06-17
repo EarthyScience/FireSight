@@ -13,10 +13,12 @@ out vec4 color;
 uniform sampler3D map;
 uniform sampler2D cmap;
 
-uniform float scale;
+uniform vec3 scale;
 uniform float threshold;
 uniform float steps;
 uniform bool flip;
+uniform vec4 flatBounds;
+uniform vec2 vertBounds;
 
 vec2 hitBox( vec3 orig, vec3 dir ) {
     vec3 box_min = vec3( -(scale*.5) );
@@ -37,22 +39,6 @@ float sample1( vec3 p ) {
 
 #define epsilon .0001
 
-vec3 normal( vec3 coord ) {
-    if ( coord.x < epsilon ) return vec3( 1.0, 0.0, 0.0 );
-    if ( coord.y < epsilon ) return vec3( 0.0, 1.0, 0.0 );
-    if ( coord.z < epsilon ) return vec3( 0.0, 0.0, 1.0 );
-    if ( coord.x > 1.0 - epsilon ) return vec3( - 1.0, 0.0, 0.0 );
-    if ( coord.y > 1.0 - epsilon ) return vec3( 0.0, - 1.0, 0.0 );
-    if ( coord.z > 1.0 - epsilon ) return vec3( 0.0, 0.0, - 1.0 );
-
-    float step = 0.01;
-    float x = sample1( coord + vec3( - step, 0.0, 0.0 ) ) - sample1( coord + vec3( step, 0.0, 0.0 ) );
-    float y = sample1( coord + vec3( 0.0, - step, 0.0 ) ) - sample1( coord + vec3( 0.0, step, 0.0 ) );
-    float z = sample1( coord + vec3( 0.0, 0.0, - step ) ) - sample1( coord + vec3( 0.0, 0.0, step ) );
-
-    return normalize( vec3( x, y, z ) );
-}
-
 void main(){
 
     vec3 rayDir = normalize( vDirection );
@@ -68,7 +54,19 @@ void main(){
     delta /= steps;
 
     for ( float t = bounds.x; t < bounds.y; t += delta ) {
+        if (p.x > -flatBounds.x || p.x < -flatBounds.y){
+            p += rayDir * delta;
+            continue;
+        };
+        if (-p.z > -flatBounds.z || -p.z < -flatBounds.w){
+            p += rayDir * delta;
+            continue;
+        };
 
+        if (p.y < vertBounds.x || p.y > vertBounds.y){
+            p += rayDir * delta;
+            continue;
+        };
         float d = sample1( p/scale + 0.5 );
         bool cond = d > threshold;
         cond = flip ? !cond: cond;

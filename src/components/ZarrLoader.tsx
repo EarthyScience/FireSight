@@ -1,26 +1,37 @@
 import React, { useEffect, useState } from 'react'
 
 import { HTTPStore, openArray } from "zarr";
-
 import {slice as zarrSlice}  from "zarr";
 
-const ZarrLoader = ({variable,setData,slice}) => {
+const baseURL = 'http://localhost:5173/SeasFireTimeChunks.zarr'
+
+const ZarrLoader = ({variable,setData,setMeta,slice}) => {
+  const {timeStart,timeEnd} = slice
+
   useEffect(()=>{
     if (!variable){return}
-    const store = new HTTPStore('http://localhost:5173/Datasets/seasfire.zarr')
+
+    const store = new HTTPStore(baseURL)
+    const fullPath = `${baseURL}/${variable}/.zattrs`;
+    fetch(fullPath)
+      .then(res => res.json())
+      .then(data=>{
+        setMeta(data)
+      })
+
     openArray({ store: store, path: variable })
       .then((zarrArray) => {
-        return zarrArray.get([zarrSlice(0,100), zarrSlice(500,600),zarrSlice(500,600)]);
+        return zarrArray.get([zarrSlice(timeStart,timeEnd), null,null]); //Dims are Z,Y,X
       })
       .then((data) => {
         // You can assign the data to a variable here
-        setData(data.flatten())
+        setData(data)
       })
       .catch((error) => {
         console.error(error);
       });
 
-  },[variable])
+  },[variable,slice])
 
   return (
     <></>
