@@ -3,15 +3,13 @@ import React, { useEffect, useState } from 'react'
 import { HTTPStore, openArray } from "zarr";
 import {slice as zarrSlice}  from "zarr";
 
-const baseURL = 'http://localhost:5173/SeasFireTimeChunks.zarr'
+const baseURL = 'http://localhost:5173/SeasFireCube_v3.zarr'
 
 const ZarrLoader = ({variable,setData,setMeta,slice}) => {
   const {timeStart,timeEnd} = slice
 
   useEffect(()=>{
     if (!variable){return}
-    const store = new HTTPStore('http://localhost:5173/SeasFireCube_v3.zarr')
-
     const store = new HTTPStore(baseURL)
     const fullPath = `${baseURL}/${variable}/.zattrs`;
     fetch(fullPath)
