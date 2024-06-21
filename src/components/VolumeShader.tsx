@@ -8,7 +8,18 @@ import ZarrLoader from './ZarrLoader';
 import { createTexture, genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
 import { useControls } from 'leva';
+import {Pane} from 'tweakpane';
 
+import {
+  // useListBlade,
+  usePaneFolder,
+  usePaneInput,
+  // useSliderBlade,
+  // useTextBlade,
+  useTweakpane,
+} from '../../pane'
+
+import * as EssentialsPlugin from '@tweakpane/plugin-essentials';
 
 import { Vars_1D, Vars_2D, Vars_3D } from '../utils/variables.json'
 // console.log(Vars_1D)
@@ -35,15 +46,6 @@ const options3D = Vars_3D.map((element) => {
   };
 });
 
-
-import {
-  // useListBlade,
-  usePaneFolder,
-  usePaneInput,
-  // useSliderBlade,
-  // useTextBlade,
-  useTweakpane,
-} from '../../pane'
 
 const varValues = genRand(1_000_000); // synthetic data, from 0 to 1.
 const volTexture = newVarData(varValues);
@@ -101,13 +103,17 @@ export function VolumeShader({data}) {
       threshold: 0.0,
       cmap: 'blackbody',
       vName: 'vpd',
+      // tInterval: {min: 16, max: 48},
     },
     {
       title: 'Controls',
       container: container,
+      plugins: EssentialsPlugin,
     }
   )
-
+  // console.log(typeof EssentialsPlugin)
+  // const tweakpane = pane.current.instance!
+  // tweakpane.registerPlugin(EssentialsPlugin);
 
   const folderGeo = usePaneFolder(pane, {
     title: 'Geometry Settings',
@@ -147,6 +153,7 @@ export function VolumeShader({data}) {
   })
 
   const cmap_texture =  createTexture(cmap_texture_name)
+
   const folderVars = usePaneFolder(pane, {
     title: 'Variables',
   })
@@ -167,6 +174,43 @@ export function VolumeShader({data}) {
     options: options1D,
     value: null
   })
+
+  const folderSlices = usePaneFolder(pane, {
+    title: 'Slice Dimensions',
+  })
+
+  // const [tslice] = usePaneInput(folderSlices, 'tInterval', {
+  //   label: 'time',
+  //   min: 1,
+  //   max: 100,
+  //   step: 1,
+  // })
+
+  // useEffect(() => {
+  //   const PARAMS = {
+  //     interval: {min: 16, max: 48},
+  //   };
+  //   const tweakpane = pane.current.instance!
+  //   tweakpane.addInput(PARAMS, 'interval', {
+  //     min: 0,
+  //     max: 100,
+  //     step: 1,
+  //   })
+  // }, [])
+
+
+const rawPane = new Pane();
+rawPane.registerPlugin(EssentialsPlugin);
+
+const params = {
+  range: {min: 16, max: 48},
+};
+
+rawPane.addBinding(params, 'range', {
+  min: 0,
+  max: 100,
+  step: 1,
+});
 
   const meshRef = useRef()
 

@@ -19,14 +19,15 @@ interface PaneConfig {
    * @hidden
    */
   document?: Document
+  plugins?: object
 }
 
-export interface PaneInstance<T extends Object> {
+export interface PaneInstance<T extends object> {
   instance: Pane | null
   params: T
 }
 
-export function useTweakpane<T extends Object>(
+export function useTweakpane<T extends object>(
   params: T = {} as T,
   paneConfig: PaneConfig = {}
 ): MutableRefObject<PaneInstance<T>> {
