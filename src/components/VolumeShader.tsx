@@ -8,8 +8,6 @@ import ZarrLoader from './ZarrLoader';
 import { createTexture, genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
 import { useControls } from 'leva';
-import {Pane} from 'tweakpane';
-
 import {
   // useListBlade,
   usePaneFolder,
@@ -18,8 +16,6 @@ import {
   // useTextBlade,
   useTweakpane,
 } from '../../pane'
-
-import * as EssentialsPlugin from '@tweakpane/plugin-essentials';
 
 import { Vars_1D, Vars_2D, Vars_3D } from '../utils/variables.json'
 // console.log(Vars_1D)
@@ -108,7 +104,6 @@ export function VolumeShader({data}) {
     {
       title: 'Controls',
       container: container,
-      plugins: EssentialsPlugin,
     }
   )
   // console.log(typeof EssentialsPlugin)
@@ -178,39 +173,6 @@ export function VolumeShader({data}) {
   const folderSlices = usePaneFolder(pane, {
     title: 'Slice Dimensions',
   })
-
-  // const [tslice] = usePaneInput(folderSlices, 'tInterval', {
-  //   label: 'time',
-  //   min: 1,
-  //   max: 100,
-  //   step: 1,
-  // })
-
-  // useEffect(() => {
-  //   const PARAMS = {
-  //     interval: {min: 16, max: 48},
-  //   };
-  //   const tweakpane = pane.current.instance!
-  //   tweakpane.addInput(PARAMS, 'interval', {
-  //     min: 0,
-  //     max: 100,
-  //     step: 1,
-  //   })
-  // }, [])
-
-
-const rawPane = new Pane();
-rawPane.registerPlugin(EssentialsPlugin);
-
-const params = {
-  range: {min: 16, max: 48},
-};
-
-rawPane.addBinding(params, 'range', {
-  min: 0,
-  max: 100,
-  step: 1,
-});
 
   const meshRef = useRef()
 

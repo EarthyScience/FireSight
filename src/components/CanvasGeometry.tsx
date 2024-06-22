@@ -24,11 +24,11 @@ export function CanvasGeometry() {
     <div className='canvas'>
       <Canvas shadows camera={{ position: [-4, 5, 4.5], fov: 50 }}>
         <Perf position="bottom-left" />
-          <VolumeShader />
+          {/* <VolumeShader /> */}
           {/* <BoxInstances /> */}
           {/* <BoxedParticles /> */}
           {/* <Cube /> */}
-          {/* <Sphere /> */}
+          <Sphere />
           <OrbitControls 
             enableDamping={true} 
             enablePan={false} 

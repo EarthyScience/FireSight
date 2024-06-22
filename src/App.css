@@ -10,3 +10,11 @@ html, body, #root {
   /* transform: translate(-30%, -50%); */
   z-index: 10;
 }
+
+.panePlugin {
+  position: absolute;
+  top: 55px;
+  right: 15px;
+  /* transform: translate(-30%, -50%); */
+  z-index: 10;
+}

@@ -12,15 +12,37 @@ import {
 } from '../../pane'
 
 function Sphere() {
+
   const meshRef = useRef<Mesh>(null!)
-  const containerElement = document.getElementById('myPane');
+
+  const panePlugin = useTweakpane(
+    {
+      color: '#daa520',
+      interval: {min: 16, max: 48},
+    },
+    {
+      title: 'Geometry Settings',
+      container:document.getElementById('myPanePlugin'),
+    }
+  )
+  const [threshold] = usePaneInput(panePlugin, 'color', {
+    label: 'hex',
+  })
+  const [tInterval] = usePaneInput(panePlugin, 'interval', {
+    label: 'interval',
+    min: 1,
+    max: 100,
+    step: 1,
+  })
+  console.log(tInterval)
+
   const pane = useTweakpane(
     {
       color: '#daa520',
     },
     {
       title: 'Geometry Settings',
-      container: containerElement,
+      container: document.getElementById('myPane'),
     }
   )
   usePaneInput(pane, 'color', { label: 'Color' }, (event) => {

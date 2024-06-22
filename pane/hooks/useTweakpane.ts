@@ -1,5 +1,6 @@
 import { MutableRefObject, useEffect, useLayoutEffect, useRef } from 'react'
 import { Pane } from 'tweakpane'
+import * as EssentialsPlugin from '@tweakpane/plugin-essentials';
 
 // This one is copied from tweakpane to avoid dist dependency
 interface PaneConfig {
@@ -19,7 +20,6 @@ interface PaneConfig {
    * @hidden
    */
   document?: Document
-  plugins?: object
 }
 
 export interface PaneInstance<T extends object> {
@@ -30,6 +30,7 @@ export interface PaneInstance<T extends object> {
 export function useTweakpane<T extends object>(
   params: T = {} as T,
   paneConfig: PaneConfig = {}
+  // plugin: T
 ): MutableRefObject<PaneInstance<T>> {
   const paneRef = useRef<PaneInstance<T>>({
     instance: null,
@@ -47,6 +48,7 @@ export function useTweakpane<T extends object>(
 
   useLayoutEffect(() => {
     const pane = new Pane(paneConfig)
+    pane.registerPlugin(EssentialsPlugin)
     paneRef.current.instance = pane
 
     return () => {
