@@ -1,6 +1,6 @@
 import { Center } from '@react-three/drei'
 
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { Color, Mesh, MeshStandardMaterial, Vector3 } from 'three'
 import {
   // useListBlade,
@@ -19,6 +19,7 @@ function Sphere() {
     {
       color: '#daa520',
       interval: {min: 16, max: 48},
+      title : 'NW',
     },
     {
       title: 'Geometry Settings',
@@ -34,7 +35,21 @@ function Sphere() {
     max: 100,
     step: 1,
   })
-  console.log(tInterval)
+  // console.log(tInterval)
+
+  useEffect(() => {
+    const tweakpane = panePlugin.current.instance!
+    const btn = tweakpane.addButton({
+      title: 'Increment',
+      label: 'counter',
+    })
+
+    let count = 0;
+    btn.on('click', () => {
+      count += 1;
+      console.log(count);
+    });
+  }, [])
 
   const pane = useTweakpane(
     {
@@ -63,3 +78,6 @@ function Sphere() {
   }
 
   export default Sphere
+
+  // Do this one next!
+  // https://github.com/tweakpane/plugin-camerakit
