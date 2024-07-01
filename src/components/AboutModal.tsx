@@ -30,6 +30,14 @@ const AboutModal = () => {
           </li>
         </ul>
         </p>
+        <a href="https://seasfire.hua.gr/">https://seasfire.hua.gr/</a><br/>
+        <a href="https://zenodo.org/records/8055879">zenodo</a>
+        <p>
+        <br/>
+        <strong>Citation: </strong> <br/><br/>
+        Alonso, L., Gans, F., Karasante, I., Ahuja, A., Prapas, I., Kondylatos, S., Papoutsis, I., Panagiotou, E., Mihail, D., Cremer, F., Weber, U., & Carvalhais, N. (2023). SeasFire Cube: A Global Dataset for Seasonal Fire Modeling in the Earth System (0.3) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.8055879
+        </p>
+
       </div>
     </div>
   );

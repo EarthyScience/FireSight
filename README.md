@@ -1,3 +1,5 @@
+![Seasfire viz toolkit](/static/SeasFireApp.gif)
+
 # FireSight
 A browser based visualization toolkit for the SeasFire data cube.
 

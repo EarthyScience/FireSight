@@ -13,8 +13,10 @@
 }
 
 .navbar img {
-  max-width: 242px;
+  max-width: 252px;
   max-height: 64px;
+  background-color: #000000aa;
+  border-radius: 0.5rem;
 }
 
 

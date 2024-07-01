@@ -43,7 +43,7 @@
 
 body {
   overscroll-behavior-y: none;
-  background: #303035;;
+  background: #2d4967;;
   font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -52,6 +52,7 @@ body {
   --accent-color1: #339ecf;
   --accent-color2: #f38e2a;
 }
+
 
 a {
   color: black;
@@ -78,8 +79,8 @@ svg {
   cursor: pointer;
   transition: border-color 0.25s;
   position: fixed;
-  top: 8px;
-  right: 8px;
+  top: 0px;
+  right: 4px;
   z-index: 9999;
 }
 .button-about:hover {

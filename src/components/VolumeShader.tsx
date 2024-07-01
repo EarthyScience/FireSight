@@ -7,8 +7,16 @@ import fragmentShader from '../utils/shaders/fragment.glsl'
 import ZarrLoader from './ZarrLoader';
 import { createTexture, genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
-import { useControls } from 'leva';
+// import { useControls } from 'leva';
 
+import {
+  // useListBlade,
+  usePaneFolder,
+  usePaneInput,
+  // useSliderBlade,
+  // useTextBlade,
+  useTweakpane,
+} from '../../pane'
 
 import { Vars_1D, Vars_2D, Vars_3D } from '../utils/variables.json'
 // console.log(Vars_1D)
@@ -36,71 +44,30 @@ const options3D = Vars_3D.map((element) => {
 });
 
 
-import {
-  // useListBlade,
-  usePaneFolder,
-  usePaneInput,
-  // useSliderBlade,
-  // useTextBlade,
-  useTweakpane,
-} from '../../pane'
-
 const varValues = genRand(1_000_000); // synthetic data, from 0 to 1.
 const volTexture = newVarData(varValues);
 
-// console.log(volTexture)
-
-
 export function VolumeShader({data}) {
 
-  const timeSlice = {
-    timeStart:{
-      value: 0, min: 0, max:965, step:12},
-    timeEnd:{
-      value:12, min:1, max: 966, step:12
-    }
-  }
-  const xSlice = {
-    xStart:{
-      value:-1,min:-1,max:1,step:0.01},
-    xEnd:{
-      value:1,min:-1,max:1,step:0.01
-    }
-  }
-
-  const ySlice = {
-    yStart:{
-      value:-1,min:-1,max:1,step:0.01},
-    yEnd:{
-      value:1,min:-1,max:1,step:0.01
-    }
-  }
-
-  const zSlice = {
-    zStart:{
-      value:-1,min:-1,max:1,step:0.01},
-    zEnd:{
-      value:1,min:-1,max:1,step:0.01}
-  }
-
   const [meta, setMeta] = useState({})
-  const timeControls = useControls('Time',timeSlice)
-  const xSlicer = useControls('X Slice', xSlice)
-  const ySlicer = useControls('Y Slice', ySlice)
-  const zSlicer = useControls('Z Slice', zSlice)
-
-
   const [volumeText, setVolumeText] = useState(volTexture)
   const [volumeData, setVolumeData] = useState(null)
   const [volumeShape, setVolumeShape] = useState(new THREE.Vector3(1,1,1))
 
-
-  const container = document.getElementById('myPane');
+  const container = document.getElementById('myPanePlugin');
   const pane = useTweakpane(
     {
+      backgroundcolor: "#2d4967",
       threshold: 0.0,
       cmap: 'blackbody',
-      vName: 'vpd',
+      vName: 'ndvi',
+      timeSlice: {min: 0, max: 24},
+      lonmax: 1.0,
+      lonmin:-1,
+      latmax: 1.0,
+      latmin:-1,
+      tmin: -1.0,
+      tmax: 1.0
     },
     {
       title: 'Controls',
@@ -108,13 +75,20 @@ export function VolumeShader({data}) {
     }
   )
 
+  const [bgcolor] = usePaneInput(pane, 'backgroundcolor', {
+    label: 'Background Color',
+    view: 'color',
+    value: "#2d4967",
+  })
+  //  update backgroundcolor
+  document.body.style.backgroundColor = bgcolor;
 
   const folderGeo = usePaneFolder(pane, {
     title: 'Geometry Settings',
   })
 
   const [threshold] = usePaneInput(folderGeo, 'threshold', {
-    label: 'threshold',
+    label: 'Threshold',
     value: 0.0,
     min: 0,
     max: 1,
@@ -124,7 +98,7 @@ export function VolumeShader({data}) {
   // List blade
 // const cmap_texture = createTexture('blackbody')
   const [cmap_texture_name] = usePaneInput(folderGeo, 'cmap', {
-    label: 'colormap',
+    label: 'Colormap',
     options: [
       {
         text: 'blackbody',
@@ -147,6 +121,7 @@ export function VolumeShader({data}) {
   })
 
   const cmap_texture =  createTexture(cmap_texture_name)
+
   const folderVars = usePaneFolder(pane, {
     title: 'Variables',
   })
@@ -154,7 +129,7 @@ export function VolumeShader({data}) {
   const [drei_var] = usePaneInput(folderVars, 'vName', {
     label: '3D',
     options: options3D,
-    value: 't2m'
+    value: 'ndvi'
   })
   const [twod_var] = usePaneInput(folderVars, 'vName', {
     label: '2D',
@@ -168,6 +143,68 @@ export function VolumeShader({data}) {
     value: null
   })
 
+  const folderSlices = usePaneFolder(pane, {
+    title: 'Slice Dimensions',
+  })
+
+  const [tInterval] = usePaneInput(folderSlices, 'timeSlice', {
+    label: 'Time window',
+    min: 0,
+    max: 966,
+    step: 1,
+  })
+
+  const [lonmax] = usePaneInput(folderSlices, 'lonmax', {
+    label: 'Lon max',
+    value: 0.0,
+    min: -1,
+    max: 1,
+    step: 0.01,
+    format: (value) => `${(value * 180).toFixed(0)}°`,
+  })
+  const [lonmin] = usePaneInput(folderSlices, 'lonmin', {
+    label: 'Lon min',
+    value: 0.0,
+    min: -1,
+    max: 1,
+    step: 0.01,
+    format: (value) => `${(value * 180).toFixed(0)}°`,
+  })
+
+  const [latmax] = usePaneInput(folderSlices, 'latmax', {
+    label: 'Lat max',
+    value: 0.0,
+    min: -1,
+    max: 1,
+    step: 0.01,
+    format: (value) => `${(value * 90).toFixed(0)}°`,
+  })
+  const [latmin] = usePaneInput(folderSlices, 'latmin', {
+    label: 'Lat min',
+    value: 0.0,
+    min: -1,
+    max: 1,
+    step: 0.01,
+    format: (value) => `${(value * 90).toFixed(0)}°`,
+  })
+
+  const [tmax] = usePaneInput(folderSlices, 'tmax', {
+    label: 'Time max',
+    value: 0.0,
+    min: -1,
+    max: 1,
+    step: 0.01,
+    format: (value) => `${((value + 1)* 12/2).toFixed(0)} day`,
+  })
+  const [tmin] = usePaneInput(folderSlices, 'tmin', {
+    label: 'Time min',
+    value: 0.0,
+    min: -1,
+    max: 1,
+    step: 0.01,
+    format: (value) => `${((value + 1) * 12/2).toFixed(0)} day`,
+  })
+
   const meshRef = useRef()
 
 
@@ -177,16 +214,17 @@ export function VolumeShader({data}) {
 
   useEffect(()=>{
     if (!volumeData){return;}
-    const [newText,newShape] = newVarData(volumeData) 
+    const [newText, newShape] = newVarData(volumeData) 
     setVolumeText(newText)
     setVolumeShape(new THREE.Vector3(2,newShape[1]/newShape[2]*2,2)) //Dims are Z,Y,X
   },[volumeData])
+  // console.log(tCut)
 
   return (
   <group position={[0,1.01,0]}>
+    
   <mesh ref={meshRef} rotation-y={Math.PI}>
     <boxGeometry args={[2, 2, 2]} />
-    {/* <icosahedronGeometry args={[2,8]} /> */}
     <shaderMaterial
       attach="material"
       args={[{
@@ -199,9 +237,8 @@ export function VolumeShader({data}) {
           scale: {value: volumeShape},
           flip: {value: false},
           cmap: {value: cmap_texture},
-          flatBounds: {value: new THREE.Vector4(xSlicer.xStart,xSlicer.xEnd,zSlicer.zStart,zSlicer.zEnd)},
-          vertBounds: {value: new THREE.Vector2(ySlicer.yStart,ySlicer.yEnd)}
-
+          flatBounds: {value: new THREE.Vector4(lonmin, lonmax, tmin, tmax)},
+          vertBounds: {value: new THREE.Vector2(latmin, latmax)}
         },
         vertexShader,
         fragmentShader,
@@ -210,7 +247,7 @@ export function VolumeShader({data}) {
     />
   </mesh>
   <Suspense>
-  <ZarrLoader variable={drei_var} setData={setVolumeData} slice={timeControls} setMeta={setMeta}/>
+    <ZarrLoader variable={drei_var} setData={setVolumeData} slice={tInterval} setMeta={setMeta}/>
   </Suspense>
   <mesh castShadow>
     <boxGeometry args={[volumeShape.x, volumeShape.y, volumeShape.z]} />

@@ -9,6 +9,7 @@ export function App() {
     <Footer />
     <CanvasGeometry />
     <div id="myPane" className='pane'></div>
+    <div id="myPanePlugin" className='panePlugin'></div>
     </>
   )
 }
