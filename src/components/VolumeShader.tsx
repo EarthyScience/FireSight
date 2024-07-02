@@ -221,8 +221,11 @@ export function VolumeShader({data}) {
   // console.log(tCut)
 
   return (
+    
   <group position={[0,1.01,0]}>
     
+  <ZarrLoader variable={drei_var} setData={setVolumeData} slice={tInterval} setMeta={setMeta}/>
+  
   <mesh ref={meshRef} rotation-y={Math.PI}>
     <boxGeometry args={[2, 2, 2]} />
     <shaderMaterial
@@ -246,9 +249,6 @@ export function VolumeShader({data}) {
       }]}
     />
   </mesh>
-  <Suspense>
-    <ZarrLoader variable={drei_var} setData={setVolumeData} slice={tInterval} setMeta={setMeta}/>
-  </Suspense>
   <mesh castShadow>
     <boxGeometry args={[volumeShape.x, volumeShape.y, volumeShape.z]} />
     <meshStandardMaterial transparent color={'red'} visible={false} />
