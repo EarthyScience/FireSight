@@ -13,8 +13,14 @@ html, body, #root {
 
 .panePlugin {
   position: absolute;
-  top: 55px;
+  top: 40px;
   right: 15px;
   /* transform: translate(-30%, -50%); */
   z-index: 10;
+}
+
+@media (max-width: 600px) {
+  .panePlugin {
+    top: 60px;
+  }
 }

@@ -1,13 +1,24 @@
 .footer {
-    color: var(--primary-text-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--secondary-text-color);
+    background-color: #000000aa;
     z-index: 1;
+    font-size: 12px;
     position: fixed;
     bottom: 0;
     left: 0;
-    padding: 2rem 2rem 0.25rem 2rem;
-    display: flex;
-    justify-content:center;
+    padding: 1rem 2rem;
     width: 100%;
+}
+
+.footer p {
+    margin: 0;
+    flex: 1;
+    text-align: center;
+    margin-left: 150px;
+    padding: 0 1rem;
 }
 
 .footer ul {
@@ -20,6 +31,7 @@
     position: relative;
     text-decoration: none;
     color: rgb(241, 233, 233);
+    padding: 0 0.25rem;
 }
 
 .footer a::after {
@@ -36,3 +48,9 @@
 .footer a:hover::after {
     width: 100%;
 }
+
+@media (max-width: 600px) {
+    .footer p {
+        margin-left: 0;
+    }
+  }

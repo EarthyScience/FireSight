@@ -6,7 +6,8 @@ import {slice as zarrSlice}  from "zarr";
 const baseURL = 'http://localhost:5173/SeasFireCube_v3.zarr'
 
 const ZarrLoader = ({variable,setData,setMeta,slice}) => {
-  const {timeStart,timeEnd} = slice
+  const timeStart = slice.min
+  const timeEnd = slice.max
 
   useEffect(()=>{
     if (!variable){return}

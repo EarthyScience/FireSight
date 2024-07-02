@@ -1,3 +1,5 @@
+![Seasfire viz toolkit](/static/SeasFireApp.gif)
+
 # FireSight
 A browser based visualization toolkit for the SeasFire data cube.
 
@@ -18,13 +20,13 @@ Take a peek at what we've already made so far and our future plans for `FireSigh
   - [x] **Why this? Easy to customize and add new input parameters**
 - [x] **Define a simple colormap mapping**
   - Maps values to rgb colors from a colormap
-- [ ] **Do a good colormap selector**
-- [ ] **Cube geometry / shader**
-- [ ] **Volumetric geometry / shader**
-- [ ] **Points / shader**
-- [ ] **Load variable for Zarr file**
-- [ ] **List all variables in pane controls**
-- [ ] **Variable selection and load data**
+- [x] **Do a good colormap selector**
+- [x] **Cube geometry / shader**
+- [x] **Volumetric geometry / shader**
+- [x] **Points / shader**
+- [x] **Load variable for Zarr file**
+- [x] **List all variables in pane controls**
+- [x] **Variable selection and load data**
 - [ ] **Pixel selection**
 - [ ] **Plot time series per pixel**
 - [ ] **Extend to model output**: TODO: Discuss approach and variables of interest.
