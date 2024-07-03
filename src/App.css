@@ -19,8 +19,38 @@ html, body, #root {
   z-index: 10;
 }
 
-@media (max-width: 600px) {
+.description {
+  position: absolute;
+  top: 60px;
+  left: 10px;
+  width: 425px;
+  padding: 10px 5px 15px 5px;
+  border-radius: 0.5rem;
+  background-color: #000000aa;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  font-size: 12px;
+  z-index: 5;
+}
+.metadata-content {
+  display: none;
+}
+
+.metadata-header {
+  cursor: pointer;
+  padding-top: 0px;
+  padding-bottom: 2px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 0;
+}
+
+@media (max-width: 896px) {
   .panePlugin {
     top: 60px;
+  }
+  .description {
+    width: 252px;
+    left: 5px;
   }
 }

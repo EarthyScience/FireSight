@@ -1,10 +1,11 @@
 import * as THREE from 'three';
-import { useEffect, useRef, useState, Suspense } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 // import { shaderMaterial } from '@react-three/drei';
 import vertexShader from '../utils/shaders/vertex.glsl'
 import fragmentShader from '../utils/shaders/fragment.glsl'
-import ZarrLoader from './ZarrLoader';
+// import ZarrLoader from './ZarrLoader';
+import ZarrLoaderLRU from './ZarrLoaderLRU';
 import { createTexture, genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
 // import { useControls } from 'leva';
@@ -54,6 +55,54 @@ export function VolumeShader({data}) {
   const [volumeData, setVolumeData] = useState(null)
   const [volumeShape, setVolumeShape] = useState(new THREE.Vector3(1,1,1))
 
+  useEffect(() => {
+    const cDescription = document.getElementById('myDescription');
+    if (cDescription && Object.keys(meta).length > 0) {
+      // Create header
+      let content = '<strong class="metadata-header">Metadata</strong>';
+      // Create a container for the metadata content
+      content += '<div class="metadata-content">';
+      // Convert the meta object to a formatted string with bold keys
+      const metaString = Object.entries(meta)
+        .map(([key, value]) => {
+          if (Array.isArray(value)) {
+            return `<strong>${key}</strong>: [${value.join(', ')}]`;
+          }
+          return `<strong>${key}</strong>: ${value}`;
+        })
+        .join('<br>');
+
+      // Add metadata to the container
+      content += metaString;
+      content += '</div>';
+
+      // Update the content
+      cDescription.innerHTML = content;
+
+      // Add event listeners for hover
+      const header = cDescription.querySelector('.metadata-header');
+      const metadataContent = cDescription.querySelector('.metadata-content');
+
+      const showContent = () => {
+        metadataContent.style.display = 'block';
+      };
+
+      const hideContent = () => {
+        metadataContent.style.display = 'none';
+      };
+
+      header.addEventListener('mouseenter', showContent);
+      cDescription.addEventListener('mouseleave', hideContent);
+
+      // Cleanup function to remove event listeners
+      return () => {
+        header.removeEventListener('mouseenter', showContent);
+        cDescription.removeEventListener('mouseleave', hideContent);
+      };
+    }
+  }, [meta]); // This effect runs whenever meta changes
+
+
   const container = document.getElementById('myPanePlugin');
   const pane = useTweakpane(
     {
@@ -61,6 +110,7 @@ export function VolumeShader({data}) {
       threshold: 0.0,
       cmap: 'blackbody',
       vName: 'ndvi',
+      description: 'hello world',
       timeSlice: {min: 0, max: 24},
       lonmax: 1.0,
       lonmin:-1,
@@ -205,6 +255,7 @@ export function VolumeShader({data}) {
     format: (value) => `${((value + 1) * 12/2).toFixed(0)} day`,
   })
 
+
   const meshRef = useRef()
 
 
@@ -218,11 +269,13 @@ export function VolumeShader({data}) {
     setVolumeText(newText)
     setVolumeShape(new THREE.Vector3(2,newShape[1]/newShape[2]*2,2)) //Dims are Z,Y,X
   },[volumeData])
+
   // console.log(tCut)
 
   return (
   <group position={[0,1.01,0]}>
-    
+  <ZarrLoaderLRU variable={drei_var} setData={setVolumeData} slice={tInterval} setMeta={setMeta}/>
+  
   <mesh ref={meshRef} rotation-y={Math.PI}>
     <boxGeometry args={[2, 2, 2]} />
     <shaderMaterial
@@ -246,9 +299,6 @@ export function VolumeShader({data}) {
       }]}
     />
   </mesh>
-  <Suspense>
-    <ZarrLoader variable={drei_var} setData={setVolumeData} slice={tInterval} setMeta={setMeta}/>
-  </Suspense>
   <mesh castShadow>
     <boxGeometry args={[volumeShape.x, volumeShape.y, volumeShape.z]} />
     <meshStandardMaterial transparent color={'red'} visible={false} />
