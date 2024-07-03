@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import { HTTPStore, openArray } from "zarr";
 import { slice as zarrSlice } from "zarr";
-
+// import LRU from 'lru-cache';
 const baseURL = 'http://localhost:5173/SeasFireCube_v3.zarr';
 
 // Define more specific types for your data and metadata
@@ -18,7 +18,7 @@ interface ZarrLoaderProps {
   };
 }
 
-const ZarrLoader: React.FC<ZarrLoaderProps> = ({ variable, setData, setMeta, slice }) => {
+const ZarrLoader = ({ variable, setData, setMeta, slice }: ZarrLoaderProps) => {
   const timeStart = slice.min;
   const timeEnd = slice.max;
   const abortControllerRef = useRef<AbortController | null>(null);

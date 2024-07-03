@@ -1,10 +1,11 @@
 import * as THREE from 'three';
-import { useEffect, useRef, useState, Suspense } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
 // import { shaderMaterial } from '@react-three/drei';
 import vertexShader from '../utils/shaders/vertex.glsl'
 import fragmentShader from '../utils/shaders/fragment.glsl'
-import ZarrLoader from './ZarrLoader';
+// import ZarrLoader from './ZarrLoader';
+import ZarrLoaderLRU from './ZarrLoaderLRU';
 import { createTexture, genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
 // import { useControls } from 'leva';
@@ -223,8 +224,8 @@ export function VolumeShader({data}) {
   return (
     
   <group position={[0,1.01,0]}>
-    
-  <ZarrLoader variable={drei_var} setData={setVolumeData} slice={tInterval} setMeta={setMeta}/>
+
+  <ZarrLoaderLRU variable={drei_var} setData={setVolumeData} slice={tInterval} setMeta={setMeta}/>
   
   <mesh ref={meshRef} rotation-y={Math.PI}>
     <boxGeometry args={[2, 2, 2]} />
