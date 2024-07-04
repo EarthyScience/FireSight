@@ -10,6 +10,9 @@ export function App() {
     <CanvasGeometry />
     <div id="myPane" className='pane'></div>
     <div id="myPanePlugin" className='panePlugin'></div>
+    <div id="myDescription" className='description'>
+      Description
+    </div>
     </>
   )
 }
