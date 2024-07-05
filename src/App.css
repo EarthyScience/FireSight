@@ -30,6 +30,7 @@ html, body, #root {
   word-wrap: break-word;
   overflow-wrap: break-word;
   font-size: 12px;
+  line-height: 1.5;
   z-index: 5;
 }
 .metadata-content {

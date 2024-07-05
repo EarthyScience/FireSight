@@ -25,7 +25,7 @@ const { min, max } = minMax(raw_data);
 const cmap = setPalette({ mn: min, mx: max });
 const data = raw_data.map(value => valuetoCmap({ cmap, value }));
 
-function BoxedParticles({ lx = 360/2/2, ly=180/2/2, lz=40, size = [0.016, 0.016] }) {
+export function ParticleInstances({ lx = 360/2/2, ly=180/2/2, lz=40, size = [0.016, 0.016] }) {
     const length = lx * ly * lz
     const containerElement = document.getElementById('myPane');
     const pane = useTweakpane(
@@ -97,5 +97,3 @@ function BoxedParticles({ lx = 360/2/2, ly=180/2/2, lz=40, size = [0.016, 0.016]
         </Center>
     );
 }
-
-export default BoxedParticles;
