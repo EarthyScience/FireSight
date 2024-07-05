@@ -35,6 +35,7 @@ function getClusteredVars(sds, ks)
     d_variables["Vars_1D"] = sort([o for o in one_dim])
     d_variables["Vars_2D"] = sort([two for two in two_dims])
     d_variables["Vars_3D"] = sort([drei for drei in drei_dims])
+    d_variables["All_vars"] = [d_variables["Vars_2D"]..., d_variables["Vars_3D"]..., d_variables["Vars_1D"]...]
     return d_variables
 end
 

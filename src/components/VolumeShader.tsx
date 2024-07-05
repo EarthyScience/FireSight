@@ -8,6 +8,7 @@ import fragmentShader from '../utils/shaders/fragment.glsl'
 import ZarrLoaderLRU from './ZarrLoaderLRU';
 import { createTexture, genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
+// import { NestedArray } from "zarr";
 import { PlotLine } from './PlotLine';
 import {
   // useListBlade,
@@ -96,30 +97,15 @@ const createTicksAndLabels = (xMax, yAspectRatio, xTicks = 4, yTicks = 4) => {
   return { xTickGeometries, yTickGeometries, xLabels, yLabels };
 };
 
-import { Vars_1D, Vars_2D, Vars_3D } from '../utils/variables.json'
-// console.log(Vars_1D)
+import { All_vars } from '../utils/variables.json'
 
-
-const options1D = Vars_1D.map((element) => {
+const optionsVars = All_vars.map((element) => {
   return {
       text: element,
       value: element
   };
 });
 
-const options2D = Vars_2D.map((element) => {
-  return {
-      text: element,
-      value: element
-  };
-});
-
-const options3D = Vars_3D.map((element) => {
-  return {
-      text: element,
-      value: element
-  };
-});
 
 
 const varValues = genRand(1_000_000); // synthetic data, from 0 to 1.
@@ -261,20 +247,9 @@ export function VolumeShader({data, xMax = 2, yAspectRatio = 0.25}) {
   })
 
   const [drei_var] = usePaneInput(folderVars, 'vName', {
-    label: '3D',
-    options: options3D,
+    label: 'Name',
+    options: optionsVars,
     value: 'ndvi'
-  })
-  const [twod_var] = usePaneInput(folderVars, 'vName', {
-    label: '2D',
-    options: options2D,
-    value: null
-  })
-
-  const [one_var] = usePaneInput(folderVars, 'vName', {
-    label: '1D',
-    options: options1D,
-    value: null
   })
 
   const folderSlices = usePaneFolder(pane, {
@@ -346,12 +321,21 @@ export function VolumeShader({data, xMax = 2, yAspectRatio = 0.25}) {
 
   useEffect(()=>{
     if (!volumeData){return;}
-    const [newText, newShape] = newVarData(volumeData) 
+    // console.log(volumeData)
+    const [newText, newShape] = newVarData(volumeData)
     setVolumeText(newText)
-    setVolumeShape(new THREE.Vector3(2,newShape[1]/newShape[2]*2,2)) //Dims are Z,Y,X
-  },[volumeData])
 
-  // console.log(tCut)
+    if (volumeData.shape.length === 3) {
+      setVolumeShape(new THREE.Vector3(2,newShape[1]/newShape[2]*2, 2)) //Dims are Z,Y,X
+    } else if (volumeData.shape.length === 2) {
+      setVolumeShape(new THREE.Vector3(2,newShape[1]/newShape[2]*2, 0.05)) //Dims are Z,Y,X
+    } else if (volumeData.shape.length === 1) {
+      setVolumeShape(new THREE.Vector3(2,newShape[1]/newShape[2]*2, 0.05)) //Dims are Z,Y,X, something is off here
+    } else {
+      console.error('Unsupported shape length:', volumeData.shape.length);
+    }
+
+  },[volumeData])
 
   return (
   <>
@@ -387,7 +371,7 @@ export function VolumeShader({data, xMax = 2, yAspectRatio = 0.25}) {
   </mesh>
   
   </group>
-  <group position={[-1, 0.25, 1.01]}> 
+  {/* <group position={[-1, 0.25, 1.01]}> 
   <PlotLine ref={plotLineRef} data={sinePlotData} color="yellow" lineWidth={2} />
       
       <line>
@@ -418,7 +402,7 @@ export function VolumeShader({data, xMax = 2, yAspectRatio = 0.25}) {
       {yLabels.map((label, index) => (
         <primitive key={`yLabel${index}`} object={label} />
       ))}
-  </group>
+  </group> */}
   </>
   )
 }
