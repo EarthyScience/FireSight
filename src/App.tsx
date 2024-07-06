@@ -13,6 +13,10 @@ export function App() {
     <div id="myDescription" className='description'>
       Description
     </div>
+    <div id="colorbar-container">
+      <div id="colorbar"></div>
+      <div id="ticks"></div>
+    </div>
     </>
   )
 }

@@ -16,7 +16,7 @@ export function CanvasGeometry() {
   return (
     <div className='canvas'>
       <Canvas shadows camera={{ position: [-4, 5, 4.5], fov: 50 }}>
-        <Perf position="bottom-left" />
+        {/* <Perf position="bottom-left" /> */}
           <VolumeShader />
           {/* <ParticleInstances /> */}
           <OrbitControls 

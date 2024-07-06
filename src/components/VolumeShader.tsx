@@ -6,7 +6,7 @@ import vertexShader from '../utils/shaders/vertex.glsl'
 import fragmentShader from '../utils/shaders/fragment.glsl'
 // import ZarrLoader from './ZarrLoader';
 import ZarrLoaderLRU from './ZarrLoaderLRU';
-import { createTexture, genRand} from '../utils/colormap'
+import { createTexture, genRand, getColors} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
 // import { NestedArray } from "zarr";
 import { PlotLine } from './PlotLine';
@@ -106,6 +106,18 @@ const optionsVars = All_vars.map((element) => {
   };
 });
 
+function rgbToHex(color: { r: number; g: number; b: number }): string {
+  const toHex = (c: number): string => {
+    const hex = Math.round(c * 255).toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+  };
+
+  const r = toHex(color.r);
+  const g = toHex(color.g);
+  const b = toHex(color.b);
+
+  return `#${r}${g}${b}`;
+}
 
 
 const varValues = genRand(1_000_000); // synthetic data, from 0 to 1.
@@ -171,7 +183,6 @@ export function VolumeShader({data, xMax = 2, yAspectRatio = 0.25}) {
       };
     }
   }, [meta]); // This effect runs whenever meta changes
-
 
   const container = document.getElementById('myPanePlugin');
   const pane = useTweakpane(
@@ -241,6 +252,47 @@ export function VolumeShader({data, xMax = 2, yAspectRatio = 0.25}) {
   })
 
   const cmap_texture =  createTexture(cmap_texture_name)
+
+  useEffect(() => {
+    const colorbarElement = document.getElementById('colorbar');
+    const ticksElement = document.getElementById('ticks');
+    const maxValue = 70
+    const minValue = -10
+    const numTicks = 5
+    const cbColors = getColors(cmap_texture_name)
+    // console.log(cbColors)
+    const gradientColors = cbColors.map((color, index) => {
+      const hexColor = rgbToHex(color);
+      const position = (index / (cbColors.length - 1)) * 100;
+      return `${hexColor} ${position}%`;
+    });
+  
+    // Create gradient
+    const gradient = `linear-gradient(to right, ${gradientColors.join(', ')})`;
+    colorbarElement.style.background = gradient;
+  
+    // Clear existing ticks
+    ticksElement.innerHTML = '';
+  
+    // Create ticks
+    const range = maxValue - minValue;
+    const tickStep = range / (numTicks - 1);
+  
+    for (let i = 0; i < numTicks; i++) {
+      const tick = document.createElement('div');
+      tick.className = 'tick';
+      tick.style.left = `${(i / (numTicks - 1)) * 100}%`;
+      ticksElement.appendChild(tick);
+  
+      const label = document.createElement('div');
+      label.className = 'tick-label';
+      label.style.left = `${(i / (numTicks - 1)) * 100}%`;
+      label.style.top = '1px';
+      label.textContent = (minValue + i * tickStep).toFixed(1);
+      ticksElement.appendChild(label);
+    }
+    // Is there any need for useEffect here? for the colorbar!
+  })
 
   const folderVars = usePaneFolder(pane, {
     title: 'Variables',

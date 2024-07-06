@@ -55,3 +55,8 @@ export function createTexture(palette: string) {
     return texture;
   }
   
+  export function getColors(palette: string) {
+    const unitInterval = Array.from({ length: 32 }, (_, index) => index / 31);
+    const cmap = setPalette({ palette, mn: 0, mx: 1 });
+    return unitInterval.map(value => cmap.getColor(value));
+  }
