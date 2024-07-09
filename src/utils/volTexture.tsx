@@ -62,5 +62,5 @@ export function newVarData(varValues) {
     volTexture.unpackAlignment = 1;
     volTexture.needsUpdate = true;
 
-    return [volTexture, [lz, ly, lx]]; // Return the new shape
+    return [volTexture, [lz, ly, lx], [minVal, maxVal]]; // Return the new shape
 }

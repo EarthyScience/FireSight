@@ -1,7 +1,7 @@
 import { Canvas } from '@react-three/fiber';
 import {VolumeShader} from './VolumeShader'
 import * as THREE from 'three'
-import { Perf } from 'r3f-perf'
+// import { Perf } from 'r3f-perf'
 // import { ParticleInstances } from './ParticleInstances'
 
 import {

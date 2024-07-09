@@ -6,7 +6,7 @@ import vertexShader from '../utils/shaders/vertex.glsl'
 import fragmentShader from '../utils/shaders/fragment.glsl'
 // import ZarrLoader from './ZarrLoader';
 import ZarrLoaderLRU from './ZarrLoaderLRU';
-import { createTexture, genRand, getColors} from '../utils/colormap'
+import { createTexture, createTexture2, genRand, getColors, getColors2} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
 // import { NestedArray } from "zarr";
 import { PlotLine } from './PlotLine';
@@ -118,7 +118,14 @@ function rgbToHex(color: { r: number; g: number; b: number }): string {
 
   return `#${r}${g}${b}`;
 }
-
+function rgbToHex2(color: [number, number, number]): string {
+  const toHex = (c: number): string => {
+    const hex = Math.round(c).toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+  };
+  const [r, g, b] = color;
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
 
 const varValues = genRand(1_000_000); // synthetic data, from 0 to 1.
 const volTexture = newVarData(varValues);
@@ -129,6 +136,8 @@ export function VolumeShader({data, xMax = 2, yAspectRatio = 0.25}) {
   const [volumeText, setVolumeText] = useState(volTexture)
   const [volumeData, setVolumeData] = useState(null)
   const [volumeShape, setVolumeShape] = useState(new THREE.Vector3(1,1,1))
+  const [minmax, setMinMax] =  useState<[number, number]>([0.0, 1.0]);
+
   const meshRef = useRef()
   const plotLineRef = useRef();
 
@@ -189,7 +198,7 @@ export function VolumeShader({data, xMax = 2, yAspectRatio = 0.25}) {
     {
       backgroundcolor: "#2d4967",
       threshold: 0.0,
-      cmap: 'blackbody',
+      cmap: 'viridis',
       vName: 'ndvi',
       description: 'hello world',
       timeSlice: {min: 0, max: 24},
@@ -228,41 +237,34 @@ export function VolumeShader({data, xMax = 2, yAspectRatio = 0.25}) {
   })
   // List blade
 // const cmap_texture = createTexture('blackbody')
+  const colormaps = ['viridis', 'plasma', 'inferno', 'Accent', 'Blues',
+    'CMRmap', 'twilight', 'tab10',  'gist_earth', 'cividis']
+
+  const colormaps_array = colormaps.map(colormap => ({
+    text: colormap,
+    value: colormap
+  }));
+
   const [cmap_texture_name] = usePaneInput(folderGeo, 'cmap', {
     label: 'Colormap',
-    options: [
-      {
-        text: 'blackbody',
-        value: 'blackbody'
-      },
-      {
-        text: 'rainbow',
-        value: 'rainbow'
-      },
-      {
-        text: 'cooltowarm',
-        value: 'cooltowarm'
-      },
-      {
-        text: 'grayscale',
-        value: 'grayscale'
-      },
-    ],
-    value: 'blackbody'
+    options: colormaps_array,
+    value: 'viridis'
   })
 
-  const cmap_texture =  createTexture(cmap_texture_name)
+  const cmap_texture =  createTexture2(cmap_texture_name)
 
   useEffect(() => {
     const colorbarElement = document.getElementById('colorbar');
     const ticksElement = document.getElementById('ticks');
-    const maxValue = 70
-    const minValue = -10
+    const maxValue = minmax[1]
+    const minValue = minmax[0]
     const numTicks = 5
-    const cbColors = getColors(cmap_texture_name)
+    const cbColors = getColors2(cmap_texture_name)
     // console.log(cbColors)
+
     const gradientColors = cbColors.map((color, index) => {
-      const hexColor = rgbToHex(color);
+      const hexColor = rgbToHex2(color);
+      // console.log(hexColor)
       const position = (index / (cbColors.length - 1)) * 100;
       return `${hexColor} ${position}%`;
     });
@@ -374,7 +376,8 @@ export function VolumeShader({data, xMax = 2, yAspectRatio = 0.25}) {
   useEffect(()=>{
     if (!volumeData){return;}
     // console.log(volumeData)
-    const [newText, newShape] = newVarData(volumeData)
+    const [newText, newShape, minmax] = newVarData(volumeData)    
+    setMinMax(minmax)
     setVolumeText(newText)
 
     if (volumeData.shape.length === 3) {

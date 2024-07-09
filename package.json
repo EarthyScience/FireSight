@@ -17,6 +17,7 @@
     "@tweakpane/plugin-essentials": "^0.2.1",
     "@types/three": "^0.164.0",
     "jotai": "^2.8.0",
+    "js-colormaps-es": "^0.0.5",
     "leva": "^0.9.35",
     "lru-cache": "^10.3.0",
     "nice-color-palettes": "^2.0.0",
