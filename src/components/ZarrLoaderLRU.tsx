@@ -19,7 +19,7 @@ interface ZarrLoaderProps {
   };
 }
 
-const CACHE_LIMIT = 100; // Set your desired cache limit
+const CACHE_LIMIT = 10; // Set your desired cache limit
 
 const ZarrLoaderLRU = ({ variable, setData, setMeta, slice }: ZarrLoaderProps) => {
   const timeStart = slice.min;
@@ -59,8 +59,18 @@ const ZarrLoaderLRU = ({ variable, setData, setMeta, slice }: ZarrLoaderProps) =
       setMeta(metaData);
 
       const zarrArray = await openArray({ store, path: variable });
-      const data = await zarrArray.get([zarrSlice(timeStart, timeEnd), null, null]) as ZarrData;
 
+    let data;
+    if (zarrArray.shape.length === 3) {
+      data = await zarrArray.get([zarrSlice(timeStart, timeEnd), null, null]) as ZarrData;
+    } else if (zarrArray.shape.length === 2) {
+      data = await zarrArray.get([null, null]) as ZarrData;
+    } else if (zarrArray.shape.length === 1) {
+      data = await zarrArray.get([null]) as ZarrData;
+    } else {
+      console.error('Unsupported shape length:', zarrArray.shape.length);
+    }
+    
       cacheRef.current.set(cacheKey, data);
 
       // Check cache size and flush if limit exceeded
@@ -68,8 +78,9 @@ const ZarrLoaderLRU = ({ variable, setData, setMeta, slice }: ZarrLoaderProps) =
     //     cacheRef.current.reset();
     //     console.log('Cache flushed due to exceeding size limit.');
     //   }
-
       setData(data);
+      // console.log(data)
+
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') return;
       console.error(error);
