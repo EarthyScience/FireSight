@@ -2,6 +2,8 @@ import * as THREE from 'three';
 
 export function newVarData(varValues) {
     if (!varValues.shape) {
+        console.log("here !")
+        console.log(varValues.shape)
         return;
     }
    

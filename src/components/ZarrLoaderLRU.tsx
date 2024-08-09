@@ -3,7 +3,8 @@ import { HTTPStore, openArray } from "zarr";
 import { slice as zarrSlice } from "zarr";
 import {LRUCache} from 'lru-cache';
 
-const baseURL = 'http://localhost:5173/SeasFireCube_v3.zarr';
+// const baseURL = 'http://localhost:5173/SeasFireCube_v3.zarr';
+const baseURL = 'http://localhost:5173/SeasFire_subset.zarr';
 
 // Define more specific types for your data and metadata
 type ZarrData = Float32Array | Int32Array | Uint32Array; // Adjust based on your actual data type
@@ -19,6 +20,8 @@ interface ZarrLoaderProps {
   };
 }
 
+
+
 const CACHE_LIMIT = 10; // Set your desired cache limit
 
 const ZarrLoaderLRU = ({ variable, setData, setMeta, slice }: ZarrLoaderProps) => {
@@ -31,15 +34,8 @@ const ZarrLoaderLRU = ({ variable, setData, setMeta, slice }: ZarrLoaderProps) =
     new LRUCache<string, ZarrData>({
       max: CACHE_LIMIT, // Maximum number of items in the cache
       ttl: 1000 * 60 * 60, // Cache entry maximum age in milliseconds (optional)
-    //   length: (data: ZarrData) => calculateCacheSize(data),
     })
   );
-
-  // Function to calculate the size of cached data
-//   const calculateCacheSize = (data: ZarrData): number => {
-//     const bytesPerElement = data instanceof Float32Array ? 4 : (data instanceof Int32Array || data instanceof Uint32Array ? 4 : 8);
-//     return data.length * bytesPerElement;
-//   };
 
   const fetchData = useCallback(async (signal: AbortSignal) => {
     if (!variable) return;
@@ -73,13 +69,8 @@ const ZarrLoaderLRU = ({ variable, setData, setMeta, slice }: ZarrLoaderProps) =
     
       cacheRef.current.set(cacheKey, data);
 
-      // Check cache size and flush if limit exceeded
-    //   if (cacheRef.current.length > CACHE_LIMIT) {
-    //     cacheRef.current.reset();
-    //     console.log('Cache flushed due to exceeding size limit.');
-    //   }
+      console.log(data.shape)
       setData(data);
-      // console.log(data)
 
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') return;

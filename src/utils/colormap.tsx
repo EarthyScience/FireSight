@@ -87,9 +87,3 @@ export function createTexture(palette: string) {
     const cmap = setPalette({ palette, mn: 0, mx: 1 });
     return unitInterval.map(value => cmap.getColor(value));
   }
-
-  export function getColors2(palette: string) {
-    const unitInterval = Array.from({ length: 32 }, (_, index) => index / 31);
-    return unitInterval.map(value => evaluate_cmap(value, palette, false));
-  }
-//   console.log(getColors2('viridis'))

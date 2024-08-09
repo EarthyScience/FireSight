@@ -1,103 +1,22 @@
 import * as THREE from 'three';
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useFrame } from '@react-three/fiber';
-// import { shaderMaterial } from '@react-three/drei';
 import vertexShader from '../utils/shaders/vertex.glsl'
 import fragmentShader from '../utils/shaders/fragment.glsl'
-// import ZarrLoader from './ZarrLoader';
 import ZarrLoaderLRU from './ZarrLoaderLRU';
-import { createTexture, createTexture2, genRand, getColors, getColors2} from '../utils/colormap'
+import { createTexture2, genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
-// import { NestedArray } from "zarr";
-import { PlotLine } from './PlotLine';
+import { updateMetadataDescription } from '../utils/metadata';
+import { updateColorbar, getColors, rgbToHex } from '../utils/updateColorbar';
+
 import {
-  // useListBlade,
   usePaneFolder,
   usePaneInput,
-  // useSliderBlade,
-  // useTextBlade,
   useTweakpane,
 } from '../../pane'
 
-// import { useControls } from 'leva';
-const generateSinePlotData = (xMax, yAspectRatio, numPoints = 100) => {
-  const points = [];
-  
-  for (let i = 0; i < numPoints; i++) {
-    const x = (i / (numPoints - 1)) * xMax;
-    const y = Math.sin((x / xMax) * 2 * Math.PI) * yAspectRatio;
-    points.push([x, y, 0]);
-  }
-  
-  return points;
-};
-
-const createTextSprite = (text, color = 'white') => {
-  const canvas = document.createElement('canvas');
-  const context = canvas.getContext('2d');
-  context.font = '100px Arial';
-  context.fillStyle = color;
-  context.fillText(text, 120, 120);
-  
-  const texture = new THREE.CanvasTexture(canvas);
-  const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
-  const sprite = new THREE.Sprite(spriteMaterial);
-  
-  sprite.scale.set(0.15, 0.08, 1);
-  
-  return sprite;
-};
-
-const createAxisGeometries = (xMax, yAspectRatio) => {
-  const xAxisGeometry = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(0, 0, 0),
-    new THREE.Vector3(xMax, 0, 0)
-  ]);
-
-  const yAxisGeometry = new THREE.BufferGeometry().setFromPoints([
-    new THREE.Vector3(0, -yAspectRatio, 0),
-    new THREE.Vector3(0, yAspectRatio, 0)
-  ]);
-
-  return { xAxisGeometry, yAxisGeometry };
-};
-
-const createTicksAndLabels = (xMax, yAspectRatio, xTicks = 4, yTicks = 4) => {
-  const xTickGeometries = [];
-  const yTickGeometries = [];
-  const xLabels = [];
-  const yLabels = [];
-  const tickSize = 0.05;
-
-  for (let i = 0; i <= xTicks; i++) {
-    const x = (i / xTicks) * xMax;
-    xTickGeometries.push(new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(x, -tickSize * yAspectRatio, 0),
-      new THREE.Vector3(x, tickSize * yAspectRatio, 0)
-    ]));
-    
-    const label = createTextSprite(x.toFixed(1), 'white');
-    label.position.set(x -0.02, -0.11 * yAspectRatio, 0);
-    xLabels.push(label);
-  }
-
-  for (let i = 0; i <= yTicks; i++) {
-    const y = ((i / yTicks) * 2 - 1) * yAspectRatio;
-    yTickGeometries.push(new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(-tickSize * xMax / 6, y, 0),
-      new THREE.Vector3(tickSize * xMax / 6, y, 0)
-    ]));
-    
-    const labelValue = (y / yAspectRatio).toFixed(1);
-    const label = createTextSprite(labelValue, 'white');
-    label.position.set(-0.1, y, 0);
-    yLabels.push(label);
-  }
-
-  return { xTickGeometries, yTickGeometries, xLabels, yLabels };
-};
-
 import { All_vars } from '../utils/variables.json'
+import { ZarrArray } from 'zarr';
 
 const optionsVars = All_vars.map((element) => {
   return {
@@ -106,92 +25,17 @@ const optionsVars = All_vars.map((element) => {
   };
 });
 
-function rgbToHex(color: { r: number; g: number; b: number }): string {
-  const toHex = (c: number): string => {
-    const hex = Math.round(c * 255).toString(16);
-    return hex.length === 1 ? '0' + hex : hex;
-  };
+const random3DArray = genRand(1000);
+console.log(random3DArray);
 
-  const r = toHex(color.r);
-  const g = toHex(color.g);
-  const b = toHex(color.b);
-
-  return `#${r}${g}${b}`;
-}
-function rgbToHex2(color: [number, number, number]): string {
-  const toHex = (c: number): string => {
-    const hex = Math.round(c).toString(16);
-    return hex.length === 1 ? '0' + hex : hex;
-  };
-  const [r, g, b] = color;
-  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-}
-
-const varValues = genRand(1_000_000); // synthetic data, from 0 to 1.
-const volTexture = newVarData(varValues);
-
-export function VolumeShader({data, xMax = 2, yAspectRatio = 0.25}) {
+export function VolumeShader() {
 
   const [meta, setMeta] = useState({})
-  const [volumeText, setVolumeText] = useState(volTexture)
+  const [volumeText, setVolumeText] = useState()
   const [volumeData, setVolumeData] = useState(null)
   const [volumeShape, setVolumeShape] = useState(new THREE.Vector3(1,1,1))
   const [minmax, setMinMax] =  useState<[number, number]>([0.0, 1.0]);
-
   const meshRef = useRef()
-  const plotLineRef = useRef();
-
-  const sinePlotData = useMemo(() => generateSinePlotData(xMax, yAspectRatio), [xMax, yAspectRatio]);
-  const { xAxisGeometry, yAxisGeometry } = useMemo(() => createAxisGeometries(xMax, yAspectRatio), [xMax, yAspectRatio]);
-  const { xTickGeometries, yTickGeometries, xLabels, yLabels } = useMemo(() => 
-    createTicksAndLabels(xMax, yAspectRatio), [xMax, yAspectRatio]);
-
-  useEffect(() => {
-    const cDescription = document.getElementById('myDescription');
-    if (cDescription && Object.keys(meta).length > 0) {
-      // Create header
-      let content = '<strong class="metadata-header">Metadata</strong>';
-      // Create a container for the metadata content
-      content += '<div class="metadata-content">';
-      // Convert the meta object to a formatted string with bold keys
-      const metaString = Object.entries(meta)
-        .map(([key, value]) => {
-          if (Array.isArray(value)) {
-            return `<strong>${key}</strong>: [${value.join(', ')}]`;
-          }
-          return `<strong>${key}</strong>: ${value}`;
-        })
-        .join('<br>');
-
-      // Add metadata to the container
-      content += metaString;
-      content += '</div>';
-
-      // Update the content
-      cDescription.innerHTML = content;
-
-      // Add event listeners for hover
-      const header = cDescription.querySelector('.metadata-header');
-      const metadataContent = cDescription.querySelector('.metadata-content');
-
-      const showContent = () => {
-        metadataContent.style.display = 'block';
-      };
-
-      const hideContent = () => {
-        metadataContent.style.display = 'none';
-      };
-
-      header.addEventListener('mouseenter', showContent);
-      cDescription.addEventListener('mouseleave', hideContent);
-
-      // Cleanup function to remove event listeners
-      return () => {
-        header.removeEventListener('mouseenter', showContent);
-        cDescription.removeEventListener('mouseleave', hideContent);
-      };
-    }
-  }, [meta]); // This effect runs whenever meta changes
 
   const container = document.getElementById('myPanePlugin');
   const pane = useTweakpane(
@@ -252,49 +96,6 @@ export function VolumeShader({data, xMax = 2, yAspectRatio = 0.25}) {
   })
 
   const cmap_texture =  createTexture2(cmap_texture_name)
-
-  useEffect(() => {
-    const colorbarElement = document.getElementById('colorbar');
-    const ticksElement = document.getElementById('ticks');
-    const maxValue = minmax[1]
-    const minValue = minmax[0]
-    const numTicks = 5
-    const cbColors = getColors2(cmap_texture_name)
-    // console.log(cbColors)
-
-    const gradientColors = cbColors.map((color, index) => {
-      const hexColor = rgbToHex2(color);
-      // console.log(hexColor)
-      const position = (index / (cbColors.length - 1)) * 100;
-      return `${hexColor} ${position}%`;
-    });
-  
-    // Create gradient
-    const gradient = `linear-gradient(to right, ${gradientColors.join(', ')})`;
-    colorbarElement.style.background = gradient;
-  
-    // Clear existing ticks
-    ticksElement.innerHTML = '';
-  
-    // Create ticks
-    const range = maxValue - minValue;
-    const tickStep = range / (numTicks - 1);
-  
-    for (let i = 0; i < numTicks; i++) {
-      const tick = document.createElement('div');
-      tick.className = 'tick';
-      tick.style.left = `${(i / (numTicks - 1)) * 100}%`;
-      ticksElement.appendChild(tick);
-  
-      const label = document.createElement('div');
-      label.className = 'tick-label';
-      label.style.left = `${(i / (numTicks - 1)) * 100}%`;
-      label.style.top = '1px';
-      label.textContent = (minValue + i * tickStep).toFixed(1);
-      ticksElement.appendChild(label);
-    }
-    // Is there any need for useEffect here? for the colorbar!
-  })
 
   const folderVars = usePaneFolder(pane, {
     title: 'Variables',
@@ -368,33 +169,57 @@ export function VolumeShader({data, xMax = 2, yAspectRatio = 0.25}) {
     format: (value) => `${((value + 1) * 12/2).toFixed(0)} day`,
   })
 
+  // do updates!
+  useEffect(() => {
+    updateColorbar({
+      colorbarId: 'colorbar',
+      ticksId: 'ticks',
+      minmax,
+      cmapTextureName: cmap_texture_name,
+      getColors,
+      rgbToHex
+    });
+  }, [minmax, cmap_texture_name, getColors, rgbToHex]);
+  
+  // This effect runs whenever meta changes
+  useEffect(() => {
+    return updateMetadataDescription(meta, 'myDescription');
+  }, [meta]);
 
   useFrame(({ camera }) => {
     meshRef.current.material.uniforms.cameraPos.value.copy(camera.position)
   })
 
-  useEffect(()=>{
-    if (!volumeData){return;}
-    // console.log(volumeData)
-    const [newText, newShape, minmax] = newVarData(volumeData)    
+  useEffect(() => {
+    if (!volumeData) {
+      const randomArray = genRand(1000);
+      console.log(randomArray)
+      setVolumeData(x=>randomArray);
+      console.warn('No data, using default');
+    }
+    console.log(volumeData)
+    
+    const [newText, newShape, minmax] = newVarData(volumeData)
     setMinMax(minmax)
     setVolumeText(newText)
 
+    // console.log('shape length:', volumeData.shape);
+
     if (volumeData.shape.length === 3) {
-      setVolumeShape(new THREE.Vector3(2,newShape[1]/newShape[2]*2, 2)) //Dims are Z,Y,X
+      setVolumeShape(new THREE.Vector3(2, newShape[1]/newShape[2]*2, 2)) //Dims are Z,Y,X
     } else if (volumeData.shape.length === 2) {
-      setVolumeShape(new THREE.Vector3(2,newShape[1]/newShape[2]*2, 0.05)) //Dims are Z,Y,X
+      setVolumeShape(new THREE.Vector3(2, newShape[1]/newShape[2]*2, 0.05)) //Dims are Z,Y,X
     } else if (volumeData.shape.length === 1) {
-      setVolumeShape(new THREE.Vector3(2,newShape[1]/newShape[2]*2, 0.05)) //Dims are Z,Y,X, something is off here
+      setVolumeShape(new THREE.Vector3(2, newShape[1]/newShape[2]*2, 0.05)) //Dims are Z,Y,X, something is off here
     } else {
       console.error('Unsupported shape length:', volumeData.shape.length);
     }
-
-  },[volumeData])
+  }, [volumeData])
 
   return (
   <>
   <group position={[0,1.01,0]}>
+
   <ZarrLoaderLRU variable={drei_var} setData={setVolumeData} slice={tInterval} setMeta={setMeta}/>
   
   <mesh ref={meshRef} rotation-y={Math.PI}>
@@ -426,38 +251,6 @@ export function VolumeShader({data, xMax = 2, yAspectRatio = 0.25}) {
   </mesh>
   
   </group>
-  {/* <group position={[-1, 0.25, 1.01]}> 
-  <PlotLine ref={plotLineRef} data={sinePlotData} color="yellow" lineWidth={2} />
-      
-      <line>
-        <bufferGeometry attach="geometry" {...xAxisGeometry} />
-        <lineBasicMaterial attach="material" color="red" />
-      </line>
-      <line>
-        <bufferGeometry attach="geometry" {...yAxisGeometry} />
-        <lineBasicMaterial attach="material" color="green" />
-      </line>
-      
-      {xTickGeometries.map((geometry, index) => (
-        <line key={`xTick${index}`}>
-          <bufferGeometry attach="geometry" {...geometry} />
-          <lineBasicMaterial attach="material" color="red" />
-        </line>
-      ))}
-      {yTickGeometries.map((geometry, index) => (
-        <line key={`yTick${index}`}>
-          <bufferGeometry attach="geometry" {...geometry} />
-          <lineBasicMaterial attach="material" color="green" />
-        </line>
-      ))}
-      
-      {xLabels.map((label, index) => (
-        <primitive key={`xLabel${index}`} object={label} />
-      ))}
-      {yLabels.map((label, index) => (
-        <primitive key={`yLabel${index}`} object={label} />
-      ))}
-  </group> */}
   </>
   )
 }
