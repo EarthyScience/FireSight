@@ -3,6 +3,7 @@ import { Lut } from 'three/examples/jsm/math/Lut.js';
 import * as THREE from 'three';
 // https://github.com/vasturiano/three-globe/blob/master/src/utils/color-utils.js
 import { evaluate_cmap } from 'js-colormaps-es';
+import { NestedArray } from 'zarr';
 
 // console.log(evaluate_cmap(0.5, 'viridis', false))
 // console.log(data)
@@ -37,8 +38,15 @@ export function minMax(values: number[]): { min: number | undefined, max: number
     const max = validValues.length > 0 ? validValues.reduce((a,b) => Math.max(a,b)) : undefined;
     return { min, max };
 }
-export function genRand(count: number): number[] {
-    return Array.from({ length: count }, () => Math.random());
+export function genRand(count: number) {
+  let data = Array.from({ length: 10 }, () => 
+    Array.from({ length: 10 }, () => 
+      Array.from({ length: 10 }, () => Math.random())
+    )
+  );  
+  const nested = new NestedArray(data,[10,10,10],'<f4')
+  return nested
+
 }
 
 export function createTexture(palette: string) {
