@@ -1,20 +1,22 @@
+import { useEffect, useMemo } from 'react';
 import { usePaneFolder, usePaneInput, useTweakpane } from '../../pane'
 import { All_vars } from '../utils/variables.json'
 import { createTexture2 } from '../utils/colormap'
 
-export function createControlPane(containerID: string) {
+export function useControlPane(containerID: string) {
     const container = document.getElementById(containerID);
-    const optionsVars = All_vars.map((element) => ({
-        text: element,
-        value: element
-    }));
 
-  const colormaps = ['viridis', 'plasma', 'inferno', 'Accent', 'Blues',
-    'CMRmap', 'twilight', 'tab10', 'gist_earth', 'cividis'];
-  const colormaps_array = colormaps.map(colormap => ({
+    const optionsVars = useMemo(() => All_vars.map((element) => ({
+    text: element,
+    value: element
+  })), []);
+
+  const colormaps = useMemo(() => ['viridis', 'plasma', 'inferno', 'Accent', 'Blues',
+    'CMRmap', 'twilight', 'tab10', 'gist_earth', 'cividis'], []);
+  const colormaps_array = useMemo(() => colormaps.map(colormap => ({
     text: colormap,
     value: colormap
-  }));
+  })), [colormaps]);
 
   const pane = useTweakpane(
     {
@@ -137,11 +139,12 @@ export function createControlPane(containerID: string) {
     format: (value) => `${((value + 1) * 12/2).toFixed(0)} day`,
   })
 
-  // Update background color
-  document.body.style.backgroundColor = bgcolor;
+  useEffect(() => {
+    // Update background color
+    document.body.style.backgroundColor = bgcolor;
+  }, [bgcolor]);
 
-  // Create texture
-  const cmap_texture = createTexture2(cmap_texture_name)
+  const cmap_texture = useMemo(() => createTexture2(cmap_texture_name), [cmap_texture_name]);
 
   return {
     threshold,

@@ -8,7 +8,7 @@ import { genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
 import { updateMetadataDescription } from '../utils/metadata';
 import { updateColorbar, getColors, rgbToHex } from '../utils/updateColorbar';
-import { createControlPane } from './PaneControls';
+import { useControlPane } from './PaneControls';
 
 export function VolumeShader() {
 
@@ -32,7 +32,7 @@ export function VolumeShader() {
     latmin,
     tmax,
     tmin
-  } = createControlPane(containerId);
+  } = useControlPane(containerId);
 
   // do updates!
   useEffect(() => {
