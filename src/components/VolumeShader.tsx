@@ -16,7 +16,6 @@ import {
 } from '../../pane'
 
 import { All_vars } from '../utils/variables.json'
-import { ZarrArray } from 'zarr';
 
 const optionsVars = All_vars.map((element) => {
   return {
@@ -24,9 +23,6 @@ const optionsVars = All_vars.map((element) => {
       value: element
   };
 });
-
-const random3DArray = genRand(1000);
-console.log(random3DArray);
 
 export function VolumeShader() {
 
@@ -179,7 +175,7 @@ export function VolumeShader() {
       getColors,
       rgbToHex
     });
-  }, [minmax, cmap_texture_name, getColors, rgbToHex]);
+  }, [minmax, cmap_texture_name]);
   
   // This effect runs whenever meta changes
   useEffect(() => {
@@ -192,12 +188,10 @@ export function VolumeShader() {
 
   useEffect(() => {
     if (!volumeData) {
-      const randomArray = genRand(1000);
-      console.log(randomArray)
-      setVolumeData(x=>randomArray);
-      console.warn('No data, using default');
+      const randomArray = genRand(50);
+      setVolumeData(randomArray);
+      return ;
     }
-    console.log(volumeData)
     
     const [newText, newShape, minmax] = newVarData(volumeData)
     setMinMax(minmax)
