@@ -10,6 +10,7 @@ export function useControlPane(containerID: string) {
     text: element,
     value: element
   })), []);
+  // TODO: append 'default' variable name
 
   const colormaps = useMemo(() => ['viridis', 'plasma', 'inferno', 'Accent', 'Blues',
     'CMRmap', 'twilight', 'tab10', 'gist_earth', 'cividis'], []);
@@ -23,7 +24,7 @@ export function useControlPane(containerID: string) {
       backgroundcolor: "#2d4967",
       threshold: 0.0,
       cmap: 'viridis',
-      vName: 'ndvi',
+      vName: 'default',
       description: 'hello world',
       timeSlice: {min: 0, max: 24},
       lonmax: 1.0,
@@ -71,7 +72,7 @@ export function useControlPane(containerID: string) {
   const [drei_var] = usePaneInput(folderVars, 'vName', {
     label: 'Name',
     options: optionsVars,
-    value: 'ndvi'
+    value: 'default'
   })
 
   const folderSlices = usePaneFolder(pane, {

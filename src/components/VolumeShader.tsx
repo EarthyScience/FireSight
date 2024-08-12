@@ -17,7 +17,7 @@ type CustomMesh = Mesh & {
 
 export function VolumeShader() {
   const [meta, setMeta] = useState({});
-  const [volumeData, setVolumeData] = useState(() => genRand(50));
+  const [volumeData, setVolumeData] = useState(() => genRand(30));
   const [volumeText, setVolumeText] = useState<THREE.Data3DTexture | null>(null);
   const [volumeShape, setVolumeShape] = useState(new THREE.Vector3(1, 1, 1));
   const [minmax, setMinMax] = useState<[number, number]>([0.0, 1.0]);
@@ -53,16 +53,10 @@ export function VolumeShader() {
     return updateMetadataDescription(meta, 'myDescription');
   }, [meta]);
 
-  useFrame(({ camera }) => {
-    if (meshRef.current) {
-      const material = meshRef.current.material;
-      material.uniforms.cameraPos.value.copy(camera.position);
-    }
-  });
-
   useEffect(() => {
     if (!volumeData) {
-      const randomArray = genRand(50);
+      // this is one is not getting set
+      const randomArray = genRand(30);
       setVolumeData(randomArray);
       return;
     }
@@ -81,6 +75,26 @@ export function VolumeShader() {
       console.error('Unsupported shape length:', volumeData.shape.length);
     }
   }, [volumeData]);
+  
+  
+
+  useFrame(({ camera }) => {
+    if (meshRef.current) {
+      const material = meshRef.current.material;
+      // First, handle volumeText readiness and other updates
+      if (volumeText) {
+        material.uniforms.map.value = volumeText;
+        material.needsUpdate = true;
+        meshRef.current.visible = true;
+      } else {
+        meshRef.current.visible = false;
+      }
+      // Finally, update the camera position uniform
+      material.uniforms.cameraPos.value.copy(camera.position);
+    }
+  });
+  // TODO: Why the mesh dimensions are not correct?
+  
 
   const shaderMaterial = useMemo(() => ({
     glslVersion: THREE.GLSL3,
@@ -88,7 +102,7 @@ export function VolumeShader() {
       map: { value: volumeText },
       cameraPos: { value: new THREE.Vector3() },
       threshold: { value: threshold },
-      steps: { value: 200 },
+      steps: { value: 400 },
       scale: { value: volumeShape },
       flip: { value: false },
       cmap: { value: cmap_texture },
@@ -109,7 +123,6 @@ export function VolumeShader() {
           slice={tInterval}
           setMeta={setMeta}
         />
-        {/* {volumeText && ( activating this one fixes rendering on load, but introduces rendering artifacts*/}
           <mesh ref={meshRef} rotation-y={Math.PI}>
             <boxGeometry args={[2, 2, 2]} />
             <shaderMaterial
@@ -120,7 +133,7 @@ export function VolumeShader() {
       
         <mesh castShadow>
           <boxGeometry args={[volumeShape.x, volumeShape.y, volumeShape.z]} />
-          <meshStandardMaterial transparent color={'red'} visible={false} />
+          <meshStandardMaterial transparent color={''} visible={false} />
         </mesh>
       </group>
     </>

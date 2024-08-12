@@ -34,7 +34,7 @@ const ZarrLoaderLRU = ({ variable, setData, setMeta, slice }: ZarrLoaderProps) =
   );
 
   const fetchData = useCallback(async (signal: AbortSignal) => {
-    if (!variable) return;
+    if (!variable || variable =='default') return;
 
     const cacheKey = `${variable}_${timeStart}_${timeEnd}`;
     if (cacheRef.current.has(cacheKey)) {
