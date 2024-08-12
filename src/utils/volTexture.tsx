@@ -2,10 +2,11 @@ import * as THREE from 'three';
 
 export function newVarData(varValues) {
     if (!varValues.shape) {
-        
+        console.log("here !")
+        console.log(varValues.shape)
         return;
     }
-    
+   
     let [lz, ly, lx] = [1, 1, 1]; // Default to 1 for each dimension
     
     if (varValues.shape.length === 3) {
@@ -21,11 +22,9 @@ export function newVarData(varValues) {
         console.error('Unsupported shape:', varValues.shape);
         return;
     }
-    
+
     const volData = new Uint8Array(lx * ly * lz);
-    console.log(varValues)
     const flat = varValues.flatten().reverse();
-    
     const maxVal = flat.reduce((a, b) => {
         if (isNaN(a)) return b;
         if (isNaN(b)) return a;
@@ -36,7 +35,7 @@ export function newVarData(varValues) {
         if (isNaN(b)) return a;
         return a > b ? b : a;
     });
-    
+
     for (let i = 0; i < flat.length; i++) {
         const normalizedValue = (flat[i] - minVal) / (maxVal - minVal) * 255;
         
@@ -57,7 +56,7 @@ export function newVarData(varValues) {
             volData[i] = normalizedValue;
         }
     }
-   
+
     const volTexture = new THREE.Data3DTexture(volData, lx, ly, lz);
     volTexture.format = THREE.RedFormat;
     volTexture.minFilter = THREE.NearestFilter;

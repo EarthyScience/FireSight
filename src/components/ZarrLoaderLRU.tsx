@@ -2,9 +2,9 @@ import { useEffect, useRef, useCallback } from 'react';
 import { HTTPStore, openArray } from "zarr";
 import { slice as zarrSlice } from "zarr";
 import {LRUCache} from 'lru-cache';
-import { genRand } from '../utils/colormap';
-const baseURL = 'http://localhost:5173/SeasFireCube_v3.zarr';
-//const baseURL = 'http://localhost:5173/SeasFire_subset.zarr';
+
+// const baseURL = 'http://localhost:5173/SeasFireCube_v3.zarr';
+const baseURL = 'http://localhost:5173/SeasFire_subset.zarr';
 
 // Define more specific types for your data and metadata
 type ZarrData = Float32Array | Int32Array | Uint32Array; // Adjust based on your actual data type
@@ -64,10 +64,6 @@ const ZarrLoaderLRU = ({ variable, setData, setMeta, slice }: ZarrLoaderProps) =
     } else if (zarrArray.shape.length === 1) {
       data = await zarrArray.get([null]) as ZarrData;
     } else {
-      const randomArray = genRand(1000);
-      console.log(randomArray)
-       setVolumeData(x=>randomArray);
-
       console.error('Unsupported shape length:', zarrArray.shape.length);
     }
     

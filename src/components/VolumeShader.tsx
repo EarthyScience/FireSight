@@ -8,7 +8,6 @@ import { createTexture2, genRand} from '../utils/colormap'
 import { newVarData } from '../utils/volTexture';
 import { updateMetadataDescription } from '../utils/metadata';
 import { updateColorbar, getColors, rgbToHex } from '../utils/updateColorbar';
-import { NestedArray } from 'zarr';
 
 import {
   usePaneFolder,
@@ -17,6 +16,7 @@ import {
 } from '../../pane'
 
 import { All_vars } from '../utils/variables.json'
+import { ZarrArray } from 'zarr';
 
 const optionsVars = All_vars.map((element) => {
   return {
@@ -25,14 +25,16 @@ const optionsVars = All_vars.map((element) => {
   };
 });
 
+const random3DArray = genRand(1000);
+console.log(random3DArray);
 
 export function VolumeShader() {
 
   const [meta, setMeta] = useState({})
   const [volumeText, setVolumeText] = useState()
-  const [volumeData, setVolumeData] = useState()
+  const [volumeData, setVolumeData] = useState(null)
   const [volumeShape, setVolumeShape] = useState(new THREE.Vector3(1,1,1))
-  const [minmax, setMinMax] =  useState([0.0, 1.0]);
+  const [minmax, setMinMax] =  useState<[number, number]>([0.0, 1.0]);
   const meshRef = useRef()
 
   const container = document.getElementById('myPanePlugin');
@@ -190,12 +192,13 @@ export function VolumeShader() {
 
   useEffect(() => {
     if (!volumeData) {
-       const randomArray = genRand(1000);
-       setVolumeData(x=>randomArray);
-      // console.warn('No data, using default');
-      return;
+      const randomArray = genRand(1000);
+      console.log(randomArray)
+      setVolumeData(x=>randomArray);
+      console.warn('No data, using default');
     }
-
+    console.log(volumeData)
+    
     const [newText, newShape, minmax] = newVarData(volumeData)
     setMinMax(minmax)
     setVolumeText(newText)
