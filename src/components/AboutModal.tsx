@@ -1,5 +1,7 @@
 import { useSetAtom } from "jotai";
 import { uiAtom } from '../state';
+import { logoSF } from "../assets/index";
+
 import './AboutModal.css'
 
 const AboutModal = () => {
@@ -18,7 +20,7 @@ const AboutModal = () => {
         >
           &times;
         </button>
-        <h2>SeasFire</h2>
+        <img src={logoSF} alt="SeasFire" width={"80%"}/>
         <p>
         The ESA-funded SeasFire project is exploring the potential of spatio-temporal asynchronous links happening between pre-occurring and non-overlapping atmospheric conditions and European fire regimes to predict the seasonal burned areas sizes in Europe by leveraging two major advancements of our time:
         <ul>
@@ -37,7 +39,15 @@ const AboutModal = () => {
         <strong>Citation: </strong> <br/><br/>
         Alonso, L., Gans, F., Karasante, I., Ahuja, A., Prapas, I., Kondylatos, S., Papoutsis, I., Panagiotou, E., Mihail, D., Cremer, F., Weber, U., & Carvalhais, N. (2023). SeasFire Cube: A Global Dataset for Seasonal Fire Modeling in the Earth System (0.3) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.8055879
         </p>
+        <a >
+        Copyright Ⓒ 2024. Licensed under the Apache License, Version 2.0.
+        </a>
 
+        <strong> <p>Address</p></strong>
+       <p>Max-Planck Institute for Biogeochemistry<br/>
+        Hans-Knöll Str. 10<br/>
+        07745 Jena
+        </p>
       </div>
     </div>
   );

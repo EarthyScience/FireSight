@@ -10,10 +10,12 @@ export function useControlPane(containerID: string) {
     text: element,
     value: element
   })), []);
-  // TODO: append 'default' variable name
+  // TODO: append 'default' variable name, read variables directrly from zarr store
 
   const colormaps = useMemo(() => ['viridis', 'plasma', 'inferno', 'Accent', 'Blues',
-    'CMRmap', 'twilight', 'tab10', 'gist_earth', 'cividis'], []);
+    'CMRmap', 'twilight', 'tab10', 'gist_earth', 'cividis',
+    'Spectral', 'gist_stern', 'gnuplot', 'gnuplot2', 'ocean', 'turbo'],
+    []);
   const colormaps_array = useMemo(() => colormaps.map(colormap => ({
     text: colormap,
     value: colormap
@@ -23,7 +25,7 @@ export function useControlPane(containerID: string) {
     {
       backgroundcolor: "#2d4967",
       threshold: 0.0,
-      cmap: 'viridis',
+      cmap: 'Spectral',
       vName: 'default',
       description: 'hello world',
       timeSlice: {min: 0, max: 24},
@@ -62,7 +64,7 @@ export function useControlPane(containerID: string) {
   const [cmap_texture_name] = usePaneInput(folderGeo, 'cmap', {
     label: 'Colormap',
     options: colormaps_array,
-    value: 'viridis'
+    value: 'Spectral'
   })
 
   const folderVars = usePaneFolder(pane, {
