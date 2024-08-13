@@ -34,6 +34,11 @@
   font-size: 14px;
 }
 
+.modal-content ul {
+  color: hsla(0, 0%, 100%, 0.5);
+  font-size: 14px;
+}
+
 .close-btn {
   position: absolute;
   top: 0.5rem;

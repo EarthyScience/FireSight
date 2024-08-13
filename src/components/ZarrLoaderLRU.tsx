@@ -4,8 +4,8 @@ import { slice as zarrSlice } from "zarr";
 import {LRUCache} from 'lru-cache';
 import { NestedArray, TypedArray } from 'zarr';
 
-// const baseURL = 'http://localhost:5173/SeasFireCube_v3.zarr';
-const baseURL = 'http://localhost:5173/SeasFire_subset.zarr';
+const baseURL = 'http://localhost:5173/SeasFireTimeChunks.zarr';
+// const baseURL = 'http://localhost:5173/SeasFire_subset.zarr';
 
 type MetaData = Record<string, unknown>;
 interface ZarrLoaderProps {
@@ -34,7 +34,7 @@ const ZarrLoaderLRU = ({ variable, setData, setMeta, slice }: ZarrLoaderProps) =
   );
 
   const fetchData = useCallback(async (signal: AbortSignal) => {
-    if (!variable || variable =='default') return;
+    if (!variable || variable.trim() === 'default') return;
 
     const cacheKey = `${variable}_${timeStart}_${timeEnd}`;
     if (cacheRef.current.has(cacheKey)) {
@@ -50,9 +50,10 @@ const ZarrLoaderLRU = ({ variable, setData, setMeta, slice }: ZarrLoaderProps) =
       const metaData: MetaData = await metaResponse.json();
       setMeta(metaData);
 
-      const zarrArray = await openArray({ store, path: variable });
+      const zarrArray = await openArray({ store, path: variable, dtype: '<f4' });
 
     let data;
+    console.log(zarrArray.shape)
     if (zarrArray.shape.length === 3) {
       data = await zarrArray.get([zarrSlice(timeStart, timeEnd), null, null]) as NestedArray<TypedArray>;
     } else if (zarrArray.shape.length === 2) {
@@ -62,7 +63,6 @@ const ZarrLoaderLRU = ({ variable, setData, setMeta, slice }: ZarrLoaderProps) =
     } else {
       console.error('Unsupported shape length:', zarrArray.shape.length);
     }
-    
       cacheRef.current.set(cacheKey, data);
       if (data) {
         setData(data);
