@@ -1,7 +1,10 @@
 import * as THREE from 'three';
-
-export function newVarData(varValues) {
+import { NestedArray, TypedArray } from 'zarr';
+// Ensure the newVarData function uses the correct types
+export function newVarData(varValues: NestedArray<TypedArray>): [THREE.Data3DTexture, number[], [number, number]] {
     if (!varValues.shape) {
+        // console.log("here !")
+        // console.log(varValues.shape)
         return;
     }
    

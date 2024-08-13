@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { HTTPStore, openArray } from "zarr";
 import { slice as zarrSlice } from "zarr";
 // import LRU from 'lru-cache';

@@ -3,6 +3,7 @@ import { Lut } from 'three/examples/jsm/math/Lut.js';
 import * as THREE from 'three';
 // https://github.com/vasturiano/three-globe/blob/master/src/utils/color-utils.js
 import { evaluate_cmap } from 'js-colormaps-es';
+import { NestedArray } from 'zarr';
 
 // console.log(evaluate_cmap(0.5, 'viridis', false))
 // console.log(data)
@@ -37,8 +38,15 @@ export function minMax(values: number[]): { min: number | undefined, max: number
     const max = validValues.length > 0 ? validValues.reduce((a,b) => Math.max(a,b)) : undefined;
     return { min, max };
 }
-export function genRand(count: number): number[] {
-    return Array.from({ length: count }, () => Math.random());
+export function genRand(count: number) {
+  const data = Array.from({ length: count }, () => 
+    Array.from({ length: count }, () => 
+      Array.from({ length: count }, () => Math.random())
+    )
+  );  
+  const nested = new NestedArray(data,[count,count,count],'<f4')
+  return nested
+
 }
 
 export function createTexture(palette: string) {
@@ -87,9 +95,3 @@ export function createTexture(palette: string) {
     const cmap = setPalette({ palette, mn: 0, mx: 1 });
     return unitInterval.map(value => cmap.getColor(value));
   }
-
-  export function getColors2(palette: string) {
-    const unitInterval = Array.from({ length: 32 }, (_, index) => index / 31);
-    return unitInterval.map(value => evaluate_cmap(value, palette, false));
-  }
-//   console.log(getColors2('viridis'))

@@ -7,7 +7,7 @@ import * as THREE from 'three'
 import {
   AccumulativeShadows,
   RandomizedLight,
-  Environment,
+  // Environment,
   OrbitControls } from '@react-three/drei'
 
 import './CanvasGeometry.css'
@@ -31,7 +31,7 @@ export function CanvasGeometry() {
           <AccumulativeShadows temporal frames={200} color="black" colorBlend={0.5} opacity={0.5} scale={10} alphaTest={0.85}>
             <RandomizedLight amount={8} radius={5} ambient={0.5} position={[5, 3, 2]} bias={0.001} />
           </AccumulativeShadows>
-        <Environment preset='dawn'/>
+        {/* <Environment preset='dawn'/> */}
 
         {/* <axesHelper scale={4}/> */}
       </Canvas>
