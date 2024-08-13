@@ -11,7 +11,7 @@ export function App() {
     <div id="myPane" className='pane'></div>
     <div id="myPanePlugin" className='panePlugin'></div>
     <div id="myDescription" className='description'>
-      Description
+      Metadata : Relevant information from to the displayed variable.
     </div>
     <div id="colorbar-container">
       <div id="colorbar"></div>
