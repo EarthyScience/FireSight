@@ -10,6 +10,7 @@ import { newVarData } from '../utils/volTexture';
 import { updateMetadataDescription } from '../utils/metadata';
 import { updateColorbar, getColors, rgbToHex } from '../utils/updateColorbar';
 import { useControlPane } from './PaneControls';
+import Analyzer from './AnalysisFunctions.jsx'
 
 type CustomMesh = Mesh & {
   material: ShaderMaterial;
@@ -36,6 +37,9 @@ export function VolumeShader() {
     latmin,
     tmax,
     tmin,
+    analysisMethod,
+    analysis1,
+    analysis2
   } = useControlPane(containerId);
 
   useEffect(() => {
@@ -55,7 +59,6 @@ export function VolumeShader() {
 
   useEffect(() => {
     if (!volumeData) {
-      // this is one is not getting set
       const randomArray = genRand(30);
       setVolumeData(randomArray);
       return;
@@ -116,13 +119,14 @@ export function VolumeShader() {
 
   return (
     <>
-      <group position={[0, 1.01, 0]}>
-        <ZarrLoaderLRU
+    <Analyzer variable1={analysis1} variable2={analysis2} />
+    <ZarrLoaderLRU
           variable={drei_var}
           setData={setVolumeData}
           slice={tInterval}
           setMeta={setMeta}
-        />
+    />
+      <group position={[0, 1.01, 0]}>
           <mesh ref={meshRef} rotation-y={Math.PI}>
             <boxGeometry args={[2, 2, 2]} />
             <shaderMaterial
