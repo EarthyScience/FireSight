@@ -60,6 +60,7 @@ const PearsonsR = (array1, array2, setData)=>{
 }
 
 const Analyzer = ({variable1, variable2, slice, setData}) =>{
+    console.log(variable1)
 
     const [data1, setData1] = useState()
     const [data2, setData2] = useState()

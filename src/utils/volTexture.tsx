@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { NestedArray, TypedArray } from 'zarr';
 // Ensure the newVarData function uses the correct types
+
 export function newVarData(varValues: NestedArray<TypedArray>): [THREE.Data3DTexture, number[], [number, number]] {
     if (!varValues.shape) {
         // console.log("here !")
@@ -66,4 +67,41 @@ export function newVarData(varValues: NestedArray<TypedArray>): [THREE.Data3DTex
     volTexture.needsUpdate = true;
 
     return [volTexture, [lz, ly, lx], [minVal, maxVal]]; // Return the new shape
+}
+
+export function new2DTexture(varValues: NestedArray<TypedArray>): [THREE.DataTexture, number[], [number, number]] {
+    if (!varValues.shape) {
+        // console.log("here !")
+        // console.log(varValues.shape)
+        return;
+    }
+   
+    let [ly, lx] = [1, 1];
+    [ly, lx] = varValues.shape;
+
+    const outData = new Uint8Array(lx * ly);
+    const flat = varValues.flatten().reverse();
+    const maxVal = flat.reduce((a, b) => {
+        if (isNaN(a)) return b;
+        if (isNaN(b)) return a;
+        return a > b ? a : b;
+    });
+    const minVal = flat.reduce((a, b) => {
+        if (isNaN(a)) return b;
+        if (isNaN(b)) return a;
+        return a > b ? b : a;
+    });
+
+    for (let i = 0; i < flat.length; i++) {
+        const normalizedValue = parseInt((flat[i] - minVal) / (maxVal - minVal) * 255);
+        outData[i] = normalizedValue
+    }
+    const newTexture = new THREE.DataTexture(outData, lx, ly);
+    newTexture.format = THREE.RedFormat;
+    newTexture.minFilter = THREE.NearestFilter;
+    newTexture.magFilter = THREE.NearestFilter;
+    newTexture.unpackAlignment = 1;
+    newTexture.needsUpdate = true;
+
+    return [newTexture, [ly, lx], [minVal, maxVal]];
 }

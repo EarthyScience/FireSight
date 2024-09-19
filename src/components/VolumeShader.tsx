@@ -4,9 +4,10 @@ import { Mesh, ShaderMaterial } from 'three';
 import { useFrame } from '@react-three/fiber';
 import vertexShader from '../utils/shaders/vertex.glsl';
 import fragmentShader from '../utils/shaders/fragment.glsl';
+import flatFragment from '../utils/shaders/fragmentFlat.glsl'
 import ZarrLoaderLRU from './ZarrLoaderLRU';
 import { genRand } from '../utils/colormap';
-import { newVarData } from '../utils/volTexture';
+import { newVarData,new2DTexture } from '../utils/volTexture';
 import { updateMetadataDescription } from '../utils/metadata';
 import { updateColorbar, getColors, rgbToHex } from '../utils/updateColorbar';
 import { useControlPane } from './PaneControls';
@@ -21,6 +22,11 @@ export function VolumeShader() {
   const [volumeData, setVolumeData] = useState(() => genRand(30));
   const [volumeText, setVolumeText] = useState<THREE.Data3DTexture | null>(null);
   const [volumeShape, setVolumeShape] = useState(new THREE.Vector3(1, 1, 1));
+
+  const [isFlatTexture, setIsFlatTexture] = useState(false);
+  const [flatText, setFlatText] = useState<THREE.DataTexture | null>(null);
+  const [flatShape, setFlatShape] = useState([1,1])
+
   const [minmax, setMinMax] = useState<[number, number]>([0.0, 1.0]);
   const meshRef = useRef<CustomMesh>(null);
 
@@ -57,12 +63,18 @@ export function VolumeShader() {
     return updateMetadataDescription(meta, 'myDescription');
   }, [meta]);
 
+  //Create volumeTexture if 3D data
   useEffect(() => {
     if (!volumeData) {
       const randomArray = genRand(30);
       setVolumeData(randomArray);
       return;
     }
+    if (volumeData.shape.length !== 3){
+      setIsFlatTexture(true)
+      return
+    }
+    setIsFlatTexture(false)
 
     const [newText, newShape, newMinmax] = newVarData(volumeData);
     setMinMax(newMinmax);
@@ -78,7 +90,15 @@ export function VolumeShader() {
       console.error('Unsupported shape length:', volumeData.shape.length);
     }
   }, [volumeData]);
-  
+
+  //Create 2D texture if 2D data
+  useEffect(()=>{
+    if (!isFlatTexture){return}
+    const [newText, newShape, newMinmax] = new2DTexture(volumeData);
+    setFlatShape(newShape)
+    setMinMax(newMinmax);
+    setFlatText(newText)
+  },[isFlatTexture,volumeData])
   
 
   useFrame(({ camera }) => {
@@ -98,7 +118,6 @@ export function VolumeShader() {
   });
   // TODO: Why the mesh dimensions are not correct?
   
-
   const shaderMaterial = useMemo(() => ({
     glslVersion: THREE.GLSL3,
     uniforms: {
@@ -119,13 +138,14 @@ export function VolumeShader() {
 
   return (
     <>
-    <Analyzer variable1={analysis1} variable2={analysis2} setData={setVolumeData} />
+    {/* <Analyzer variable1={analysis1} variable2={analysis2} setData={setVolumeData} /> */}
     <ZarrLoaderLRU
           variable={drei_var}
           setData={setVolumeData}
           slice={tInterval}
           setMeta={setMeta}
     />
+    {!isFlatTexture && 
       <group position={[0, 1.01, 0]}>
           <mesh ref={meshRef} rotation-y={Math.PI}>
             <boxGeometry args={[2, 2, 2]} />
@@ -135,11 +155,33 @@ export function VolumeShader() {
             />
           </mesh>
       
-        <mesh castShadow>
+        <mesh castShadow >
           <boxGeometry args={[volumeShape.x, volumeShape.y, volumeShape.z]} />
           <meshStandardMaterial transparent color={''} visible={false} />
         </mesh>
-      </group>
+      </group>}
+
+      {isFlatTexture && 
+      <group position={[0, 1.01, 0]}>
+        <mesh rotation-y={Math.PI}>
+          <planeGeometry args={[flatShape[1]/flatShape[0],1]}/>
+          <shaderMaterial attach='material'
+            args={[{
+              glslVersion:THREE.GLSL3,
+              uniforms:{
+                map: {value: flatText},
+                cmap: { value: cmap_texture },
+                threshold: { value: threshold }
+              },
+              vertexShader,
+              fragmentShader:flatFragment,
+              side:2
+            }
+            ]} />
+          <meshStandardMaterial map={flatText} side={2}/>
+        </mesh>
+      </group>}
+      
     </>
   );
 }
