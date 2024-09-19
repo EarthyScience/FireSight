@@ -119,7 +119,7 @@ export function VolumeShader() {
 
   return (
     <>
-    <Analyzer variable1={analysis1} variable2={analysis2} />
+    <Analyzer variable1={analysis1} variable2={analysis2} setData={setVolumeData} />
     <ZarrLoaderLRU
           variable={drei_var}
           setData={setVolumeData}
