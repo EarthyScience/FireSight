@@ -11,7 +11,9 @@ import { newVarData,new2DTexture } from '../utils/volTexture';
 import { updateMetadataDescription } from '../utils/metadata';
 import { updateColorbar, getColors, rgbToHex } from '../utils/updateColorbar';
 import { useControlPane } from './PaneControls';
+import TimeSeries from './TimeSeries.jsx'
 import Analyzer from './AnalysisFunctions.jsx'
+import {Zarr1D} from './ZarrLoaderLRU'
 
 type CustomMesh = Mesh & {
   material: ShaderMaterial;
@@ -28,6 +30,8 @@ export function VolumeShader() {
   const [flatShape, setFlatShape] = useState([1,1])
 
   const [minmax, setMinMax] = useState<[number, number]>([0.0, 1.0]);
+  const [uv, setUv] = useState<THREE.Vector2>(null)
+  const [normal, setNormal] = useState<THREE.Vector3>(null)
   const meshRef = useRef<CustomMesh>(null);
 
   const containerId = 'myPanePlugin';
@@ -117,7 +121,6 @@ export function VolumeShader() {
     }
   });
   // TODO: Why the mesh dimensions are not correct?
-  console.log(volumeShape)
   const shaderMaterial = useMemo(() => ({
     glslVersion: THREE.GLSL3,
     uniforms: {
@@ -155,7 +158,7 @@ export function VolumeShader() {
             />
           </mesh>
       
-        <mesh castShadow >
+        <mesh onClick={(event)=>{setUv(x=>event.uv),setNormal(x=>event.normal)}} castShadow >
           <boxGeometry args={[volumeShape.x, volumeShape.y, volumeShape.z]} />
           <meshStandardMaterial transparent color={''} visible={false} />
         </mesh>
