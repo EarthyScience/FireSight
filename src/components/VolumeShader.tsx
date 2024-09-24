@@ -21,7 +21,7 @@ export function VolumeShader() {
   const [meta, setMeta] = useState({});
   const [volumeData, setVolumeData] = useState(() => genRand(30));
   const [volumeText, setVolumeText] = useState<THREE.Data3DTexture | null>(null);
-  const [volumeShape, setVolumeShape] = useState(new THREE.Vector3(1, 1, 1));
+  const [volumeShape, setVolumeShape] = useState(new THREE.Vector3(2, 2, 2));
 
   const [isFlatTexture, setIsFlatTexture] = useState(false);
   const [flatText, setFlatText] = useState<THREE.DataTexture | null>(null);
@@ -117,7 +117,7 @@ export function VolumeShader() {
     }
   });
   // TODO: Why the mesh dimensions are not correct?
-  
+  console.log(volumeShape)
   const shaderMaterial = useMemo(() => ({
     glslVersion: THREE.GLSL3,
     uniforms: {
