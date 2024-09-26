@@ -19,7 +19,7 @@ export function VolumeShader() {
   const [meta, setMeta] = useState({});
   const [volumeData, setVolumeData] = useState(() => genRand(30));
   const [volumeText, setVolumeText] = useState<THREE.Data3DTexture | null>(null);
-  const [volumeShape, setVolumeShape] = useState(new THREE.Vector3(1, 1, 1));
+  const [volumeShape, setVolumeShape] = useState(new THREE.Vector3(2, 2, 2));
   const [minmax, setMinMax] = useState<[number, number]>([0.0, 1.0]);
   const meshRef = useRef<CustomMesh>(null);
 

@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import { usePaneFolder, usePaneInput, useTweakpane } from '../../pane'
-import { All_vars } from '../utils/variables.json'
+import { All_vars } from '../utils/variables_forcing.json'
 import { createTexture2 } from '../utils/colormap'
 
 export function useControlPane(containerID: string) {
