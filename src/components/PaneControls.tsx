@@ -192,6 +192,19 @@ export function useControlPane(containerID: string) {
   }, [pane])
 
   useEffect(() => {
+    const pane_button = pane.current.instance!
+    const btn = pane_button.addButton({
+      title: 'Compute!',
+      label: 'Apply function'
+    });
+    let count = 0;
+    btn.on('click', () => {
+      count += 1;
+      console.log(count);
+    });
+  }, [pane])
+
+  useEffect(() => {
     // Update background color
     document.body.style.backgroundColor = bgcolor;
   }, [bgcolor]);
