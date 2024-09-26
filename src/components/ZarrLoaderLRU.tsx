@@ -5,7 +5,8 @@ import {LRUCache} from 'lru-cache';
 import { NestedArray, TypedArray } from 'zarr';
 import * as THREE from 'three'
 
-const baseURL = 'http://localhost:5173/SeasFireTimeChunks.zarr';
+// const baseURL = 'http://localhost:5173/SeasFireTimeChunks.zarr';
+const baseURL = 'http://localhost:5173/GlobalForcing.zarr';
 // const baseURL = 'http://localhost:5173/SeasFire_subset.zarr';
 
 type MetaData = Record<string, unknown>;
