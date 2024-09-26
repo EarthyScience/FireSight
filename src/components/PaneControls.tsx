@@ -3,6 +3,17 @@ import { usePaneFolder, usePaneInput, useTweakpane } from '../../pane'
 import { All_vars } from '../utils/variables.json'
 import { createTexture2 } from '../utils/colormap'
 
+const analysisMethods = [
+  {
+    text:"Pearsons R",
+    value: "r"
+  },
+  {
+    text: "Average",
+    value:"mean"
+  }
+]
+
 export function useControlPane(containerID: string) {
     const container = document.getElementById(containerID);
 
@@ -34,7 +45,10 @@ export function useControlPane(containerID: string) {
       latmax: 1.0,
       latmin: -1,
       tmin: -1.0,
-      tmax: 1.0
+      tmax: 1.0,
+      analysis:'Pearsons R',
+      var1: 'default',
+      var2: 'default'
     },
     {
       title: 'Controls',
@@ -141,6 +155,41 @@ export function useControlPane(containerID: string) {
     step: 0.01,
     format: (value) => `${((value + 1) * 12/2).toFixed(0)} day`,
   })
+
+  const analysisFolder = usePaneFolder(pane,{
+    title:"Quick Analysis"
+  })
+
+  const [analysisMethod] = usePaneInput(analysisFolder, 'analysis', {
+    label: 'Method',
+    options: analysisMethods,
+    value: 'default'
+  })
+
+  const [analysis1] = usePaneInput(analysisFolder, 'var1', {
+    label: 'Variable 1',
+    options: optionsVars,
+    value: 'default'
+  })
+
+  const [analysis2] = usePaneInput(analysisFolder, 'var2', {
+    label: 'Variable 2',
+    options: optionsVars,
+    value: 'default'
+  })
+
+  useEffect(() => {
+    const pane_button = pane.current.instance!
+    const btn = pane_button.addButton({
+      title: 'Compute!',
+      label: 'Apply function'
+    });
+    let count = 0;
+    btn.on('click', () => {
+      count += 1;
+      console.log(count);
+    });
+  }, [pane])
 
   useEffect(() => {
     const pane_button = pane.current.instance!
