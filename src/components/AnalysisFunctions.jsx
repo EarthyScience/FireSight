@@ -61,11 +61,11 @@ const PearsonsR = (array1, array2, setData)=>{
 
 const Analyzer = ({variable1, variable2, slice, setData}) =>{
     console.log(variable1)
-
+    console.log(variable2)
     const [data1, setData1] = useState()
     const [data2, setData2] = useState()
-    ZarrLoaderAnalysis({variable:'vpd_map',setData:setData1,slice:{min:0,max:24}})
-    ZarrLoaderAnalysis({variable:'tp_map',setData:setData2,slice:{min:0,max:24}})
+    ZarrLoaderAnalysis({variable:variable1, setData:setData1, slice:{min:0, max:24}})
+    ZarrLoaderAnalysis({variable:variable2, setData:setData2, slice:{min:0, max:24}})
 
     useEffect(()=>{
         if (!data1|| !data2){

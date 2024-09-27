@@ -11,9 +11,9 @@ import { newVarData,new2DTexture } from '../utils/volTexture';
 import { updateMetadataDescription } from '../utils/metadata';
 import { updateColorbar, getColors, rgbToHex } from '../utils/updateColorbar';
 import { useControlPane } from './PaneControls';
-import TimeSeries from './TimeSeries.jsx'
+// import TimeSeries from './TimeSeries.jsx'
 import Analyzer from './AnalysisFunctions.jsx'
-import {Zarr1D} from './ZarrLoaderLRU'
+// import {Zarr1D} from './ZarrLoaderLRU'
 
 type CustomMesh = Mesh & {
   material: ShaderMaterial;
@@ -33,7 +33,7 @@ export function VolumeShader() {
   const [uv, setUv] = useState<THREE.Vector2>(null)
   const [normal, setNormal] = useState<THREE.Vector3>(null)
   const meshRef = useRef<CustomMesh>(null);
-
+  
   const containerId = 'myPanePlugin';
   const {
     threshold,
@@ -47,9 +47,10 @@ export function VolumeShader() {
     latmin,
     tmax,
     tmin,
-    analysisMethod,
+    // analysisMethod,
     analysis1,
-    analysis2
+    analysis2,
+    do_compute,
   } = useControlPane(containerId);
 
   useEffect(() => {
@@ -103,7 +104,6 @@ export function VolumeShader() {
     setMinMax(newMinmax);
     setFlatText(newText)
   },[isFlatTexture,volumeData])
-  
 
   useFrame(({ camera }) => {
     if (meshRef.current) {
@@ -141,7 +141,13 @@ export function VolumeShader() {
 
   return (
     <>
-    {/* <Analyzer variable1={analysis1} variable2={analysis2} setData={setVolumeData} /> */}
+    {do_compute && (
+      <Analyzer 
+        variable1={analysis1} 
+        variable2={analysis2} 
+        setData={setVolumeData} 
+      />
+    )}
     <ZarrLoaderLRU
           variable={drei_var}
           setData={setVolumeData}

@@ -1,6 +1,9 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { usePaneFolder, usePaneInput, useTweakpane } from '../../pane'
-import { All_vars } from '../utils/variables.json'
+// import { ButtonApi } from 'tweakpane';
+import { All_vars } from '../utils/variables_forcing.json'
+// import { All_vars } from '../utils/variables_televit.json'
+
 import { createTexture2 } from '../utils/colormap'
 
 const analysisMethods = [
@@ -16,7 +19,7 @@ const analysisMethods = [
 
 export function useControlPane(containerID: string) {
     const container = document.getElementById(containerID);
-
+    // const btnRef = useRef<ButtonApi | null>(null);
     const optionsVars = useMemo(() => All_vars.map((element) => ({
     text: element,
     value: element
@@ -48,7 +51,8 @@ export function useControlPane(containerID: string) {
       tmax: 1.0,
       analysis:'Pearsons R',
       var1: 'default',
-      var2: 'default'
+      var2: 'default',
+      compute: false
     },
     {
       title: 'Controls',
@@ -177,32 +181,10 @@ export function useControlPane(containerID: string) {
     options: optionsVars,
     value: 'default'
   })
-
-  useEffect(() => {
-    const pane_button = pane.current.instance!
-    const btn = pane_button.addButton({
-      title: 'Compute!',
-      label: 'Apply function'
-    });
-    let count = 0;
-    btn.on('click', () => {
-      count += 1;
-      console.log(count);
-    });
-  }, [pane])
-
-  useEffect(() => {
-    const pane_button = pane.current.instance!
-    const btn = pane_button.addButton({
-      title: 'Compute!',
-      label: 'Apply function'
-    });
-    let count = 0;
-    btn.on('click', () => {
-      count += 1;
-      console.log(count);
-    });
-  }, [pane])
+  const [do_compute] = usePaneInput(analysisFolder, 'compute', {
+    label: 'Apply function',
+    value: false
+  })
 
   useEffect(() => {
     // Update background color
@@ -222,6 +204,10 @@ export function useControlPane(containerID: string) {
     latmax,
     latmin,
     tmax,
-    tmin
+    tmin,
+    // analysisMethod,
+    analysis1,
+    analysis2,
+    do_compute
   }
 }
