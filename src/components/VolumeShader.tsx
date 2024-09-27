@@ -12,7 +12,7 @@ import { updateMetadataDescription } from '../utils/metadata';
 import { updateColorbar, getColors, rgbToHex } from '../utils/updateColorbar';
 import { useControlPane } from './PaneControls';
 // import TimeSeries from './TimeSeries.jsx'
-import Analyzer from './AnalysisFunctions.jsx'
+import { Analyzer } from './AnalysisFunctions.js'
 // import {Zarr1D} from './ZarrLoaderLRU'
 
 type CustomMesh = Mesh & {
