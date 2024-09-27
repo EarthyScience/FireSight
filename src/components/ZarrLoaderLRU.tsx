@@ -20,7 +20,7 @@ interface ZarrLoaderProps {
     min: number;
     max: number;
   };
-  selection:{
+  selection?:{
     uv: THREE.Vector2;
     normal: THREE.Vector3;
   }
