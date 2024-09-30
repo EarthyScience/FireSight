@@ -3,7 +3,15 @@ using YAXArrayBase
 using JSON3
 using Random
 
-sds = open_dataset("./public/SeasFireCube_v3.zarr")
+sds = open_dataset("./public/SeasFireTimeChunks.zarr")
+
+sds_forcing = open_dataset("./public/GlobalForcing.zarr")
+
+ds_attns = open_dataset("/Net/Groups/BGI/work_4/scratch/lalonso/seasfire_televit_attentions.zarr")
+
+ds_pred = open_dataset("/Net/Groups/BGI/work_4/scratch/lalonso/seasfire_televit_predictions.zarr")
+
+
 ds = Zarr.zopen("./public/SeasFireCube_v3.zarr", consolidated=true)
 
 ks = string.(keys(ds.arrays))
