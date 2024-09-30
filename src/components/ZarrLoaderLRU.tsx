@@ -7,7 +7,7 @@ import * as THREE from 'three'
 
 // const baseURL = 'http://localhost:5173/SeasFireTimeChunks.zarr';
 const baseURL = 'http://localhost:5173/GlobalForcing.zarr';
-// const baseURL = 'http://localhost:5173/Televit.zarr';
+// const baseURL = 'http://localhost:5173/Televit_pred.zarr';
 
 // const baseURL = 'http://localhost:5173/SeasFire_subset.zarr';
 

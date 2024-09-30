@@ -1,7 +1,8 @@
 // import React from 'react'
 import { useState, useEffect } from 'react';
 import {ZarrLoaderAnalysis} from './ZarrLoaderLRU';
-import { NestedArray } from 'zarr';
+import { NestedArray, TypedArray } from 'zarr';
+import { Dispatch, SetStateAction } from 'react';
 
 function arraysEqual<T>(arr1: T[], arr2: T[]): boolean {
     if (arr1.length !== arr2.length) {
@@ -58,13 +59,23 @@ const PearsonsR = (array1, array2, setData)=>{
     setData(output)
 }
 
-export const Analyzer = ({variable1, variable2, slice, setData}) =>{
-    console.log(variable1)
-    console.log(variable2)
+interface AnalyzerProps {
+    variable1: string | null;
+    variable2: string | null;
+    slice: {
+      min: number;
+      max: number;
+    };
+    setData: Dispatch<SetStateAction<NestedArray<TypedArray>>>;
+  }
+
+export const Analyzer = ({variable1, variable2, slice, setData}: AnalyzerProps) =>{
+    // console.log(variable1)
+    // console.log(variable2)
     const [data1, setData1] = useState()
     const [data2, setData2] = useState()
-    ZarrLoaderAnalysis({variable:variable1, setData:setData1, slice:{min:0, max:24}})
-    ZarrLoaderAnalysis({variable:variable2, setData:setData2, slice:{min:0, max:24}})
+    ZarrLoaderAnalysis({variable:variable1, setDataA:setData1, slice:{min:0, max:24}})
+    ZarrLoaderAnalysis({variable:variable2, setDataA:setData2, slice:{min:0, max:24}})
 
     useEffect(()=>{
         if (!data1|| !data2){
@@ -73,6 +84,6 @@ export const Analyzer = ({variable1, variable2, slice, setData}) =>{
         console.log()
         PearsonsR(data1,data2,setData)
 
-    },[data1,data2])
-   
+    },[data1,data2]);
+    return null;
 }

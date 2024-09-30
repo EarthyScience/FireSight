@@ -3,6 +3,7 @@ import { usePaneFolder, usePaneInput, useTweakpane } from '../../pane'
 // import { ButtonApi } from 'tweakpane';
 import { All_vars } from '../utils/variables_forcing.json'
 // import { All_vars } from '../utils/variables_televit.json'
+// import { All_vars } from '../utils/variables.json'
 
 import { createTexture2 } from '../utils/colormap'
 
@@ -161,7 +162,7 @@ export function useControlPane(containerID: string) {
   })
 
   const analysisFolder = usePaneFolder(pane,{
-    title:"Quick Analysis"
+    title:"Analysis"
   })
 
   const [analysisMethod] = usePaneInput(analysisFolder, 'analysis', {

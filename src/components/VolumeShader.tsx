@@ -144,7 +144,8 @@ export function VolumeShader() {
     {do_compute && (
       <Analyzer 
         variable1={analysis1} 
-        variable2={analysis2} 
+        variable2={analysis2}
+        slice={tInterval}
         setData={setVolumeData} 
       />
     )}
