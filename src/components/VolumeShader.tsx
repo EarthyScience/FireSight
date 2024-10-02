@@ -37,6 +37,7 @@ export function VolumeShader() {
   const containerId = 'myPanePlugin';
   const {
     threshold,
+    thresholdMode,
     cmap_texture_name,
     cmap_texture,
     drei_var,
@@ -129,7 +130,7 @@ export function VolumeShader() {
       threshold: { value: threshold },
       steps: { value: 400 },
       scale: { value: volumeShape },
-      flip: { value: false },
+      flip: { value: thresholdMode },
       cmap: { value: cmap_texture },
       flatBounds: { value: new THREE.Vector4(lonmin, lonmax, tmin, tmax) },
       vertBounds: { value: new THREE.Vector2(latmin, latmax) },
@@ -137,7 +138,7 @@ export function VolumeShader() {
     vertexShader,
     fragmentShader,
     side: THREE.BackSide,
-  }), [volumeText, threshold, volumeShape, cmap_texture, lonmin, lonmax, latmin, latmax, tmin, tmax]);
+  }), [volumeText, threshold, volumeShape, thresholdMode, cmap_texture, lonmin, lonmax, latmin, latmax, tmin, tmax]);
 
   return (
     <>
