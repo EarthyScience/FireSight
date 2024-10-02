@@ -39,6 +39,7 @@ export function useControlPane(containerID: string) {
   const pane = useTweakpane(
     {
       backgroundcolor: "#2d4967",
+      thresholdMode: false,
       threshold: 0.0,
       cmap: 'Spectral',
       vName: 'default',
@@ -71,8 +72,13 @@ export function useControlPane(containerID: string) {
     title: 'Geometry Settings',
   })
 
+  const [thresholdMode] = usePaneInput(folderGeo, 'thresholdMode', {
+    label: 'Threshold Mode',
+    value: false,
+  })
+
   const [threshold] = usePaneInput(folderGeo, 'threshold', {
-    label: 'Threshold',
+    label: thresholdMode ? 'Max Threshold' : 'Min Threshold', // I dunno how to get the boolean value of the thresholdMode. This seems broken
     value: 0.0,
     min: 0,
     max: 1,
@@ -195,6 +201,7 @@ export function useControlPane(containerID: string) {
   const cmap_texture = useMemo(() => createTexture2(cmap_texture_name), [cmap_texture_name]);
 
   return {
+    thresholdMode,
     threshold,
     cmap_texture_name,
     cmap_texture,
