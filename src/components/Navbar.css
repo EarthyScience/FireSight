@@ -1,14 +1,10 @@
 
 .navbar {
-  position: absolute;
   display: flex;
+  position: fixed;
   justify-content: space-between;
-  top: 8px;
-  right: 8px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 98%;
-  max-width: 1024px;
+  top: 2px;
+  left: 2px;
   z-index: 1;
 }
 

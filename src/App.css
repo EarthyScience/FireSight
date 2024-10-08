@@ -14,7 +14,7 @@ html, body, #root {
 .panePlugin {
   position: absolute;
   top: 40px;
-  right: 15px;
+  right: 2px;
   /* transform: translate(-30%, -50%); */
   z-index: 10;
 }
@@ -82,7 +82,7 @@ html, body, #root {
 
 @media (max-width: 896px) {
   .panePlugin {
-    top: 60px;
+    top: 44px;
   }
   .description {
     width: 252px;

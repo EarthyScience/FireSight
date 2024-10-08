@@ -5,11 +5,11 @@
     color: var(--secondary-text-color);
     background-color: #000000aa;
     z-index: 1;
-    font-size: 12px;
+    font-size: 13.5px;
     position: fixed;
     bottom: 0;
     left: 0;
-    padding: 1rem 2rem;
+    padding: 0.5rem 1rem;
     width: 100%;
 }
 
@@ -17,8 +17,7 @@
     margin: 0;
     flex: 1;
     text-align: center;
-    margin-left: 50px;
-    padding: 0 1rem;
+    margin-left: 8px;
 }
 
 .footer ul {
@@ -50,6 +49,10 @@
 }
 
 @media (max-width: 600px) {
+    .footer {
+        flex-direction: column;
+        align-items: center;
+      }
     .footer p {
         margin-left: 0;
     }

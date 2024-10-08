@@ -79,8 +79,8 @@ svg {
   cursor: pointer;
   transition: border-color 0.25s;
   position: fixed;
-  top: 0px;
-  right: 4px;
+  top: 2px;
+  right: 2px;
   z-index: 9999;
 }
 .button-about:hover {
