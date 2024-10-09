@@ -1,4 +1,4 @@
-export function updateMetadataDescription(meta, containerId) {
+export function updateMetadataDescription(meta: Record<string, any>, containerId: string) {
     const cDescription = document.getElementById(containerId);
     
     if (cDescription && Object.keys(meta).length > 0) {
@@ -20,25 +20,6 @@ export function updateMetadataDescription(meta, containerId) {
       content += '</div>';
       // Update the content
       cDescription.innerHTML = content;
-  
-      // Add event listeners for hover
-      const header = cDescription.querySelector('.metadata-header');
-      const metadataContent = cDescription.querySelector('.metadata-content');
-      const showContent = () => {
-        metadataContent.style.display = 'block';
-      };
-      const hideContent = () => {
-        metadataContent.style.display = 'none';
-      };
-      header.addEventListener('mouseenter', showContent);
-      cDescription.addEventListener('mouseleave', hideContent);
-  
-      // Return cleanup function
-      return () => {
-        header.removeEventListener('mouseenter', showContent);
-        cDescription.removeEventListener('mouseleave', hideContent);
-      };
     }
-    
     return () => {}; // Return empty cleanup function if conditions are not met
   }

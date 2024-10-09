@@ -19,7 +19,7 @@ html, body, #root {
 
 .description {
   position: absolute;
-  top: 48px;
+  top: 50px;
   left: 2px;
   width: fit-content;
   max-width: 80px;
@@ -55,8 +55,19 @@ html, body, #root {
 }
 
 .metadata-content {
-  display: none;
+  max-height: 0;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
+
+.metadata-header:hover + .metadata-content {
+  max-height: 300px;
+  opacity: 1;
+  visibility: visible;
+}
+
 
 .metadata-header {
   cursor: pointer;
