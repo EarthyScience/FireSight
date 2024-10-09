@@ -7,7 +7,6 @@ html, body, #root {
   position: absolute;
   top: 20%;
   left: 3%;
-  /* transform: translate(-30%, -50%); */
   z-index: 10;
 }
 
@@ -15,24 +14,46 @@ html, body, #root {
   position: absolute;
   top: 40px;
   right: 2px;
-  /* transform: translate(-30%, -50%); */
   z-index: 10;
 }
 
 .description {
   position: absolute;
-  top: 60px;
-  left: 10px;
-  width: 425px;
-  padding: 10px 5px 15px 5px;
+  top: 48px;
+  left: 2px;
+  width: fit-content;
+  max-width: 80px;
+  padding: 0.25rem;
   border-radius: 0.5rem;
-  background-color: #000000aa;
+  background: #000000ab;
   word-wrap: break-word;
   overflow-wrap: break-word;
   font-size: 12px;
   line-height: 1.5;
   z-index: 5;
+  color: #dfdcdc;
 }
+
+.description:hover {
+  max-width: 300px;
+}
+
+.hiddenMeta {
+  max-height: 0;
+  max-width: 265px;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+.description:hover .hiddenMeta {
+  visibility: visible;
+  max-height: 300px;
+  padding: 0.2rem;
+  opacity: 1;
+  overflow: auto;
+}
+
 .metadata-content {
   display: none;
 }
@@ -85,8 +106,19 @@ html, body, #root {
     top: 44px;
   }
   .description {
-    width: 252px;
-    left: 5px;
+    width: fit-content;
+    max-width: 80px;
+    left: 2px;
+    padding: 0.25rem;
+  }
+  .description:hover {
+    max-width: 240px;
+  }
+
+  .description:hover .hiddenMeta {
+    max-height: 300px;
+    max-width: 240px;
+    overflow: auto;
   }
   #colorbar-container {
     width: 50%;
