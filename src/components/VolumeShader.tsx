@@ -66,7 +66,7 @@ export function VolumeShader() {
   }, [minmax, cmap_texture_name]);
 
   useEffect(() => {
-    return updateMetadataDescription(meta, 'myDescription');
+    return updateMetadataDescription(meta, 'myDescription', 'name-label', 'units-label');
   }, [meta]);
 
   //Create volumeTexture if 3D data

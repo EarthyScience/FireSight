@@ -5,7 +5,7 @@ import { All_vars } from '../utils/variables_forcing.json'
 // import { All_vars } from '../utils/variables_televit.json'
 // import { All_vars } from '../utils/variables.json'
 
-import { createTexture2 } from '../utils/colormap'
+import { createTexture } from '../utils/colormap'
 
 const analysisMethods = [
   {
@@ -198,7 +198,7 @@ export function useControlPane(containerID: string) {
     document.body.style.backgroundColor = bgcolor;
   }, [bgcolor]);
 
-  const cmap_texture = useMemo(() => createTexture2(cmap_texture_name), [cmap_texture_name]);
+  const cmap_texture = useMemo(() => createTexture(cmap_texture_name), [cmap_texture_name]);
 
   return {
     thresholdMode,

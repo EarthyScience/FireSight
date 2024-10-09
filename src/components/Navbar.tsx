@@ -5,7 +5,9 @@ import './Navbar.css'
 const Navbar = () => {
   return (
     <nav className="navbar">
-      <img src={logoSeasFire} alt="SeasFire"/>
+      <a href="https://github.com/SeasFire/FireSight" target="_blank">
+        <img src={logoSeasFire} alt="SeasFire"/>
+      </a>
       <AboutButton />
     </nav>
   );

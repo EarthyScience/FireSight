@@ -7,35 +7,67 @@ html, body, #root {
   position: absolute;
   top: 20%;
   left: 3%;
-  /* transform: translate(-30%, -50%); */
   z-index: 10;
 }
 
 .panePlugin {
   position: absolute;
   top: 40px;
-  right: 15px;
-  /* transform: translate(-30%, -50%); */
+  right: 2px;
   z-index: 10;
 }
 
 .description {
   position: absolute;
-  top: 60px;
-  left: 10px;
-  width: 425px;
-  padding: 10px 5px 15px 5px;
+  top: 44px;
+  left: 2px;
+  width: fit-content;
+  max-width: 80px;
+  padding: 0.25rem;
   border-radius: 0.5rem;
-  background-color: #000000aa;
+  background: #000000ab;
   word-wrap: break-word;
   overflow-wrap: break-word;
   font-size: 12px;
   line-height: 1.5;
   z-index: 5;
+  color: #dfdcdc;
 }
+
+.description:hover {
+  max-width: 300px;
+}
+
+.hiddenMeta {
+  max-height: 0;
+  max-width: 265px;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+}
+.description:hover .hiddenMeta {
+  visibility: visible;
+  max-height: 300px;
+  padding: 0.2rem;
+  opacity: 1;
+  overflow: auto;
+}
+
 .metadata-content {
-  display: none;
+  max-height: 0;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
 }
+
+.metadata-header:hover + .metadata-content {
+  max-height: 300px;
+  opacity: 1;
+  visibility: visible;
+}
+
 
 .metadata-header {
   cursor: pointer;
@@ -47,20 +79,89 @@ html, body, #root {
 }
 #colorbar-container {
   position: fixed;
-  top: 8px;
+  top: 4px;
   left: 50%;
   transform: translateX(-50%);
-  width: 300px;
-  height: 25px;
+  width: 360px;
+  height: 30px;
   background-color: #000000aa;
+  border-radius: 4px;
+  display: grid;
+  grid-template-columns: auto 65% auto;
+  grid-template-rows: 1fr 1fr;
+  align-items: center;
+  padding: 0 10px;
+  gap: 2px;
 }
 
+.left-label {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  justify-self: start;
+  color: #f5c024;
+  font-size: 13px;
+  font-weight: bold;
+  transform: translateX(4px) translateY(-8px);
+  max-width: 50px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &:hover {
+    overflow-x: auto;
+    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+    white-space: nowrap;
+    max-width: 150px;
+    background-color: #000000aa;
+    border-radius: 3px;
+    z-index: 11;
+  }
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.right-label {
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  justify-self: end;
+  color: #f5c024;
+  font-size: 13px;
+  font-weight: bold;
+  transform: translateX(-4px) translateY(-8px);
+  max-width: 40px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &:hover {
+    overflow-x: auto;
+    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+    white-space: nowrap;
+    max-width: 150px;
+    background-color: #000000aa;
+    border-radius: 3px;
+    z-index: 11;
+  }
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
 #colorbar {
+  grid-column: 2;
+  grid-row: 1;
   width: 100%;
   height: 12px;
+  background-color: #ffffff;
 }
 
 #ticks {
+  grid-column: 2;
+  grid-row: 2;
   position: relative;
   width: 100%;
   height: 30px;
@@ -69,26 +170,40 @@ html, body, #root {
 .tick {
   position: absolute;
   width: 1px;
-  height: 12px;
-  top: -12px;
+  height: 14.5px;
+  top: -14px;
   background-color: var(--secondary-text-color);
 }
 
 .tick-label {
   position: absolute;
+  padding-top: 0px;
   font-size: 12px;
   transform: translateX(-50%);
+  text-align: center;
 }
 
 @media (max-width: 896px) {
   .panePlugin {
-    top: 60px;
+    top: 44px;
   }
   .description {
-    width: 252px;
-    left: 5px;
+    width: fit-content;
+    max-width: 80px;
+    left: 2px;
+    padding: 0.25rem;
+  }
+  .description:hover {
+    max-width: 240px;
+  }
+
+  .description:hover .hiddenMeta {
+    max-height: 300px;
+    max-width: 240px;
+    overflow: auto;
   }
   #colorbar-container {
-    width: 50%;
+    width: 65%;
+    padding: 0 5px;
   }
 }
