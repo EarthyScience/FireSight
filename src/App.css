@@ -79,37 +79,44 @@ html, body, #root {
 }
 #colorbar-container {
   position: fixed;
-  top: 8px;
+  top: 4px;
   left: 50%;
   transform: translateX(-50%);
-  width: 300px;
-  height: 25px;
+  width: 320px;
+  height: 30px;
   background-color: #000000aa;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 #colorbar {
-  width: 100%;
+  width: 85%;
   height: 12px;
+  background-color: #ffffff;
 }
 
 #ticks {
   position: relative;
-  width: 100%;
+  width: 85%;
   height: 30px;
 }
 
 .tick {
   position: absolute;
   width: 1px;
-  height: 12px;
-  top: -12px;
+  height: 13px;
+  top: -9px;
   background-color: var(--secondary-text-color);
 }
 
 .tick-label {
   position: absolute;
+  padding-top: 4px;
   font-size: 12px;
   transform: translateX(-50%);
+  text-align: center;
 }
 
 @media (max-width: 896px) {
