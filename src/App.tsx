@@ -17,10 +17,10 @@ export function App() {
       </div>
     </div>
     <div id="colorbar-container">
-      <div className="left-label">name</div>
+      <div id="name-label" className="left-label">name</div>
       <div id="colorbar"></div>
       <div id="ticks"></div>
-      <div className="right-label">units</div>
+      <div id="units-label" className="right-label">units</div>
     </div>
     </>
   )

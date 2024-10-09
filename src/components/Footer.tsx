@@ -15,7 +15,7 @@ const Footer = () => (
       </a>
     </div>
     <div className="expandable-text">
-      <p>Copyright Ⓒ 2024. All Rights Reserved.</p>
+      <p>Licensed under the Apache License, Version 2.0</p>
       <span>Contact :<a href="https://lazarusa.github.io/" target='_blank'>Lazaro Alonso</a> </span>
     </div>
     <div className="small-screen-logos">

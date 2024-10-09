@@ -1,5 +1,13 @@
-export function updateMetadataDescription(meta: Record<string, any>, containerId: string) {
+export function updateMetadataDescription(
+  meta: Record<string, any>,
+  containerId: string,
+  nameId: string,
+  unitsId: string,
+)
+  {
     const cDescription = document.getElementById(containerId);
+    const cName = document.getElementById(nameId)
+    const cUnits = document.getElementById(unitsId)
     
     if (cDescription && Object.keys(meta).length > 0) {
       // Create header
@@ -9,6 +17,17 @@ export function updateMetadataDescription(meta: Record<string, any>, containerId
       // Convert the meta object to a formatted string with bold keys
       const metaString = Object.entries(meta)
         .map(([key, value]) => {
+          // adds variable name
+          if (cName && key === 'name') {
+            cName.innerHTML = '';
+            cName.innerHTML =`${value}`;
+          }
+          // adds units
+          if (cUnits && key === 'units') {
+            cUnits.innerHTML = '';
+            cUnits.innerHTML =`${value}`;
+          }
+          // all metadata
           if (Array.isArray(value)) {
             return `<strong>${key}</strong>: [${value.join(', ')}]`;
           }
