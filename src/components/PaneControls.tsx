@@ -45,8 +45,8 @@ export function useControlPane(containerID: string) {
     {
       backgroundcolor: "#2d4967",
       axes: "#c8cdd2",
-      thresholdMode: false,
-      threshold: 0.0,
+      thresholdMode: true,
+      threshold: 1.0,
       cmap: 'Spectral',
       vName: 'default',
       description: 'hello world',

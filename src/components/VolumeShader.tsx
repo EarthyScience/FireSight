@@ -127,20 +127,24 @@ export function VolumeShader() {
   const shaderMaterial = useMemo(() => ({
     glslVersion: THREE.GLSL3,
     uniforms: {
-      map: { value: volumeText },
-      cameraPos: { value: new THREE.Vector3() },
-      threshold: { value: threshold },
-      steps: { value: 400 },
-      scale: { value: volumeShape },
-      flip: { value: thresholdMode },
-      cmap: { value: cmap_texture },
-      flatBounds: { value: new THREE.Vector4(lonmin, lonmax, tmin, tmax) },
-      vertBounds: { value: new THREE.Vector2(latmin, latmax) },
+        map: { value: volumeText },
+        cameraPos: { value: new THREE.Vector3() },
+        threshold: { value: threshold },
+        steps: { value: 400 },
+        scale: { value: volumeShape },
+        flip: { value: thresholdMode },
+        cmap: { value: cmap_texture },
+        flatBounds: { value: new THREE.Vector4(lonmin, lonmax, tmin, tmax) },
+        vertBounds: { value: new THREE.Vector2(latmin, latmax) },
     },
-    vertexShader,
-    fragmentShader,
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShader,
+    transparent: true, // Enable transparency
+    blending: THREE.NormalBlending, // Use normal blending mode
+    depthWrite: false, // Disable depth writing for proper blending
     side: THREE.BackSide,
-  }), [volumeText, threshold, volumeShape, thresholdMode, cmap_texture, lonmin, lonmax, latmin, latmax, tmin, tmax]);
+}), [volumeText, threshold, volumeShape, thresholdMode, cmap_texture, lonmin, lonmax, latmin, tmin, tmax]);
+
 
   return (
     <>

@@ -15,27 +15,35 @@ export function minMax(values: number[]): { min: number | undefined, max: number
 export function createTexture(palette: string) {
   const unitInterval = Array.from({ length: 255 }, (_, index) => index / 254);
   const rgbv = unitInterval.map(value => evaluate_cmap(value, palette, false));
-  const colData = new Uint8Array(rgbv.length * 4);
+  const colData = new Uint8Array((rgbv.length + 1) * 4);
 
   for (let i = 0; i < rgbv.length; i++) {
-    const [r, g, b] = rgbv[i];  // Destructure the RGB values
+    const [r, g, b] = rgbv[i];
     colData[i * 4] = r;
     colData[i * 4 + 1] = g;
     colData[i * 4 + 2] = b;
-    colData[i * 4 + 3] = 255;  // Alpha channel
+    colData[i * 4 + 3] = 205;  // Alpha channel
   }
-  // console.log(colData);
-  const texture = new THREE.DataTexture(colData, rgbv.length, 1, THREE.RGBAFormat);
+
+  // Add the last color as white and semi-transparent
+  const lastIndex = rgbv.length * 4;
+  colData[lastIndex] = 255;
+  colData[lastIndex + 1] = 255;
+  colData[lastIndex + 2] = 255;
+  colData[lastIndex + 3] = 5;  // Semi-transparent alpha
+
+  const texture = new THREE.DataTexture(colData, rgbv.length + 1, 1, THREE.RGBAFormat);
   texture.needsUpdate = true;
   return texture;
 }
+
 
 export function genRand(count: number) {
   const data = Array.from({ length: count }, () =>
       Array.from({ length: count }, () =>
           Array.from({ length: count }, () => {
               // Randomly insert NaN values (e.g., 10% chance)
-              if (Math.random() < 0.3) {
+              if (Math.random() < 0.6) {
                   return NaN;
               }
               return Math.random();

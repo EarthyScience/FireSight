@@ -39,7 +39,7 @@ export function newVarData(varValues: NestedArray<TypedArray>): [THREE.Data3DTex
     });
 
     for (let i = 0; i < flat.length; i++) {
-        const normalizedValue = (flat[i] - minVal) / (maxVal - minVal) * 255;
+        const normalizedValue = isNaN(flat[i]) ? 255 : (flat[i] - minVal) / (maxVal - minVal) * 255;
         
         if (varValues.shape.length === 1) {
             // For 1D data, duplicate along y and z!
