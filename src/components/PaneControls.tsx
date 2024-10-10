@@ -59,6 +59,7 @@ export function useControlPane(containerID: string) {
     {
       title: 'Controls',
       container: container,
+      expanded: false,
     }
   )
 
@@ -70,6 +71,7 @@ export function useControlPane(containerID: string) {
 
   const folderGeo = usePaneFolder(pane, {
     title: 'Geometry Settings',
+    expanded: false,
   })
 
   const [thresholdMode] = usePaneInput(folderGeo, 'thresholdMode', {
@@ -94,6 +96,7 @@ export function useControlPane(containerID: string) {
 
   const folderVars = usePaneFolder(pane, {
     title: 'Variables',
+    expanded: false,
   })
 
   const [drei_var] = usePaneInput(folderVars, 'vName', {
@@ -104,6 +107,7 @@ export function useControlPane(containerID: string) {
 
   const folderSlices = usePaneFolder(pane, {
     title: 'Slice Dimensions',
+    expanded: false,
   })
 
   const [tInterval] = usePaneInput(folderSlices, 'timeSlice', {
@@ -168,7 +172,8 @@ export function useControlPane(containerID: string) {
   })
 
   const analysisFolder = usePaneFolder(pane,{
-    title:"Analysis"
+    title:"Analysis",
+    expanded: false,
   })
 
   const [analysisMethod] = usePaneInput(analysisFolder, 'analysis', {
