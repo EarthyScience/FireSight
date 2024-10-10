@@ -7,6 +7,7 @@ export function FrameBoxed({
   origin = [0, 0, 0],
   fontsize = 0.065,
   color = "#c8cdd2",
+  sepFactor = 1.9,
 }) {
   const boxGeometry = new THREE.BoxGeometry(width, height, depth);
   const edges = new THREE.EdgesGeometry(boxGeometry); // Extract only the edges (no diagonals)
@@ -15,11 +16,11 @@ export function FrameBoxed({
   <group position={new THREE.Vector3(...origin)}>
     <mesh>
       <lineSegments geometry={edges}>
-        <lineBasicMaterial color="#c8cdd2" />
+        <lineBasicMaterial color={color} />
       </lineSegments>
     </mesh>
     <Text
-      position={[0, -height / 2, depth / 1.8]}
+      position={[0, -height / 2, depth / sepFactor]}
       fontSize={fontsize}
       color={color}
       // rotation={[-Math.PI / 2, 0, 0]}
@@ -36,7 +37,7 @@ export function FrameBoxed({
     </Text>
 
     <Text
-      position={[-width / 2, -height / 2, depth / 1.8]}
+      position={[-width / 2, -height / 2, depth / sepFactor]}
       fontSize={fontsize}
       color={color}
       // rotation={[-Math.PI / 2, 0, 0]}
@@ -45,7 +46,7 @@ export function FrameBoxed({
     </Text>
 
     <Text
-      position={[width / 2, -height / 2, depth / 1.8]}
+      position={[width / 2, -height / 2, depth / sepFactor]}
       fontSize={fontsize}
       color={color}
       // rotation={[-Math.PI / 2, 0, 0]}
@@ -54,7 +55,7 @@ export function FrameBoxed({
     </Text>
 
     <Text
-      position={[-width / 1.8, 0, -depth / 2]}
+      position={[-width / sepFactor, 0, -depth / 2]}
       fontSize={fontsize}
       color={color}
       rotation={[0, 0, Math.PI / 2]}

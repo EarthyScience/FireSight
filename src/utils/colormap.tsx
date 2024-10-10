@@ -31,13 +31,19 @@ export function createTexture(palette: string) {
 }
 
 export function genRand(count: number) {
-  const data = Array.from({ length: count }, () => 
-    Array.from({ length: count }, () => 
-      Array.from({ length: count }, () => Math.random())
-    )
-  );  
-  const nested = new NestedArray(data,[count,count,count],'<f4')
-  return nested
+  const data = Array.from({ length: count }, () =>
+      Array.from({ length: count }, () =>
+          Array.from({ length: count }, () => {
+              // Randomly insert NaN values (e.g., 10% chance)
+              if (Math.random() < 0.3) {
+                  return NaN;
+              }
+              return Math.random();
+          })
+      )
+  );
+  const nested = new NestedArray(data, [count, count, count], '<f4');
+  return nested;
 }
 
 // TODO
