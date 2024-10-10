@@ -15,7 +15,7 @@ const Footer = () => (
       </a>
     </div>
     <div className="expandable-text">
-      <p>Ⓒ Licensed under the Apache License, Version 2.0</p>
+      <p>Ⓒ <a href="https://github.com/SeasFire/FireSight?tab=Apache-2.0-1-ov-file#readme" target="_blank">Apache License, Version 2.0</a></p>
       <span>Contact :<a href="https://lazarusa.github.io/" target='_blank'>Lazaro Alonso</a> </span>
     </div>
     <div className="small-screen-logos">

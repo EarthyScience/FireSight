@@ -1,7 +1,5 @@
 import { Canvas } from '@react-three/fiber';
 import { VolumeShader } from './VolumeShader'
-import { FrameBoxed } from './FrameBoxed';
-
 import * as THREE from 'three'
 // import { Perf } from 'r3f-perf'
 // import { ParticleInstances } from './ParticleInstances'
@@ -17,14 +15,8 @@ import './CanvasGeometry.css'
 export function CanvasGeometry() {
   return (
     <div className='canvas'>
-      <Canvas shadows camera={{ position: [-4, 3, 4.5], fov: 50 }}>
+      <Canvas shadows camera={{ position: [-4.5, 3, 4.5], fov: 50 }}>
         {/* <Perf position="bottom-left" /> */}
-          <FrameBoxed
-            width={2.1} 
-            height={2.1} 
-            depth={2.1} 
-            origin={[0,1,0]} // Specify the origin for the box
-          />
           <VolumeShader />
           {/* <ParticleInstances /> */}
           

@@ -14,6 +14,7 @@ import { useControlPane } from './PaneControls';
 // import TimeSeries from './TimeSeries.jsx'
 import { Analyzer } from './AnalysisFunctions.js'
 // import {Zarr1D} from './ZarrLoaderLRU'
+import { FrameBoxed } from './FrameBoxed';
 
 type CustomMesh = Mesh & {
   material: ShaderMaterial;
@@ -158,7 +159,7 @@ export function VolumeShader() {
     />
     {!isFlatTexture && 
       <group position={[0, 1.01, 0]}>
-          <mesh ref={meshRef} rotation-y={Math.PI}>
+          <mesh ref={meshRef} rotation-y={Math.PI/2}>
             <boxGeometry args={[2, 2, 2]} />
             <shaderMaterial
               attach="material"
@@ -170,11 +171,16 @@ export function VolumeShader() {
           <boxGeometry args={[volumeShape.x, volumeShape.y, volumeShape.z]} />
           <meshStandardMaterial transparent color={''} visible={false} />
         </mesh>
+        <FrameBoxed
+            width={volumeShape.x + 0.1} 
+            height={volumeShape.y + 0.1} 
+            depth={volumeShape.z + 0.1} 
+          />
       </group>}
 
       {isFlatTexture && 
       <group position={[0, 1.01, 0]}>
-        <mesh rotation-y={Math.PI}>
+        <mesh rotation-y={Math.PI/2}>
           <planeGeometry args={[flatShape[1]/flatShape[0],1]}/>
           <shaderMaterial attach='material'
             args={[{
