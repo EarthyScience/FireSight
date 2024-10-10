@@ -42,17 +42,18 @@ export function VolumeShader() {
     cmap_texture_name,
     cmap_texture,
     drei_var,
-    tInterval,
+    timeSlice,
     lonmax,
     lonmin,
     latmax,
     latmin,
     tmax,
     tmin,
-    // analysisMethod,
+    analysisMethod,
     analysis1,
     analysis2,
     do_compute,
+    color_axes,
   } = useControlPane(containerId);
 
   useEffect(() => {
@@ -147,14 +148,14 @@ export function VolumeShader() {
       <Analyzer 
         variable1={analysis1} 
         variable2={analysis2}
-        slice={tInterval}
+        slice={timeSlice}
         setData={setVolumeData} 
       />
     )}
     <ZarrLoaderLRU
           variable={drei_var}
           setData={setVolumeData}
-          slice={tInterval}
+          slice={timeSlice}
           setMeta={setMeta}
     />
     {!isFlatTexture && 
@@ -172,9 +173,10 @@ export function VolumeShader() {
           <meshStandardMaterial transparent color={''} visible={false} />
         </mesh>
         <FrameBoxed
-            width={volumeShape.x + 0.1} 
-            height={volumeShape.y + 0.1} 
-            depth={volumeShape.z + 0.1} 
+            width={volumeShape.x + 0.05} 
+            height={volumeShape.y + 0.05} 
+            depth={volumeShape.z + 0.05}
+            color={color_axes}
           />
       </group>}
 
