@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+THREE.Cache.enabled = true;
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { Mesh, ShaderMaterial } from 'three';
 import { useFrame } from '@react-three/fiber';
@@ -54,6 +55,7 @@ export function VolumeShader() {
     analysis2,
     do_compute,
     color_axes,
+    alpha_intensity,
   } = useControlPane(containerId);
 
   useEffect(() => {
@@ -130,20 +132,21 @@ export function VolumeShader() {
         map: { value: volumeText },
         cameraPos: { value: new THREE.Vector3() },
         threshold: { value: threshold },
-        steps: { value: 400 },
+        steps: { value: 200 },
         scale: { value: volumeShape },
         flip: { value: thresholdMode },
         cmap: { value: cmap_texture },
         flatBounds: { value: new THREE.Vector4(lonmin, lonmax, tmin, tmax) },
         vertBounds: { value: new THREE.Vector2(latmin, latmax) },
+        intensity: {value: alpha_intensity}
     },
     vertexShader: vertexShader,
     fragmentShader: fragmentShader,
-    transparent: true, // Enable transparency
-    blending: THREE.NormalBlending, // Use normal blending mode
-    depthWrite: false, // Disable depth writing for proper blending
+    transparent: true,
+    blending: THREE.NormalBlending,
+    depthWrite: false,
     side: THREE.BackSide,
-}), [volumeText, threshold, volumeShape, thresholdMode, cmap_texture, lonmin, lonmax, latmin, tmin, tmax]);
+}), [volumeText, threshold, volumeShape, thresholdMode, cmap_texture, lonmin, lonmax, latmin, tmin, tmax, alpha_intensity]);
 
 
   return (

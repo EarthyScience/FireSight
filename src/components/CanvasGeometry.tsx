@@ -1,7 +1,8 @@
+import * as THREE from 'three'
+THREE.Cache.enabled = true;
 import { Canvas } from '@react-three/fiber';
 import { VolumeShader } from './VolumeShader'
-import * as THREE from 'three'
-// import { Perf } from 'r3f-perf'
+import { Perf } from 'r3f-perf'
 // import { ParticleInstances } from './ParticleInstances'
 
 import {
@@ -16,7 +17,7 @@ export function CanvasGeometry() {
   return (
     <div className='canvas'>
       <Canvas shadows camera={{ position: [-4.5, 3, 4.5], fov: 50 }}>
-        {/* <Perf position="bottom-left" /> */}
+        <Perf position="bottom-left" style={{ bottom: '3.25rem' }} />
           <VolumeShader />
           {/* <ParticleInstances /> */}
           

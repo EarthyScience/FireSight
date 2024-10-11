@@ -19,6 +19,7 @@ uniform float steps;
 uniform bool flip;
 uniform vec4 flatBounds;
 uniform vec2 vertBounds;
+uniform float intensity;
 
 vec2 hitBox(vec3 orig, vec3 dir) {
     vec3 box_min = vec3(-(scale * 0.5));
@@ -69,14 +70,13 @@ void main() {
         }
 
         float d = sample1(p / scale + 0.5);
-        if (d == -1.0) continue; // Skip NaN values
 
         bool cond = (d > threshold) || (d == 0.0 && threshold == 0.0);
         cond = flip ? !cond : cond;
 
         if (cond) {
             vec4 col = texture(cmap, vec2(d, 0.5));
-            float alpha = col.a / 15.0; // Normalize alpha to 0-1 range
+            float alpha = col.a / intensity;
             accumColor.rgb += (1.0 - alphaAcc) * alpha * col.rgb;
             alphaAcc += alpha * (1.0 - alphaAcc);
 

@@ -45,6 +45,10 @@ export function useControlPane(containerID: string) {
     {
       backgroundcolor: "#2d4967",
       axes: "#c8cdd2",
+      nan_color: "#000000",
+      alpha: 255,
+      nan_alpha: 255,
+      alpha_intensity: 1.0,
       thresholdMode: true,
       threshold: 1.0,
       cmap: 'Spectral',
@@ -111,6 +115,33 @@ export function useControlPane(containerID: string) {
     label: 'Colormap',
     options: colormaps_array,
     value: 'Spectral'
+  })
+
+  const [alpha] = usePaneInput(folderColors, 'alpha', {
+    label: 'transparency',
+    min: 0,
+    max: 255,
+    step: 1,
+  })
+
+  const [nan_color] = usePaneInput(folderColors, 'nan_color', {
+    label: 'nan color',
+    view: 'color',
+    value: "#000000",
+  })
+
+  const [nan_alpha] = usePaneInput(folderColors, 'nan_alpha', {
+    label: 'nan transparency',
+    min: 0,
+    max: 255,
+    step: 1,
+  })
+
+  const [alpha_intensity] = usePaneInput(folderColors, 'alpha_intensity', {
+    label: 'intensity',
+    min: 1.0,
+    max: 15.0,
+    step: 0.1,
   })
 
   useLayoutEffect(() => {
@@ -313,7 +344,7 @@ export function useControlPane(containerID: string) {
     document.body.style.backgroundColor = bgcolor;
   }, [bgcolor]);
 
-  const cmap_texture = useMemo(() => createTexture(cmap_texture_name), [cmap_texture_name]);
+  const cmap_texture = useMemo(() => createTexture(cmap_texture_name, alpha, nan_color, nan_alpha), [cmap_texture_name, alpha, nan_color, nan_alpha]);
 
   return {
     thresholdMode,
@@ -332,6 +363,7 @@ export function useControlPane(containerID: string) {
     analysis1,
     analysis2,
     do_compute,
-    color_axes
+    color_axes,
+    alpha_intensity
   }
 }
