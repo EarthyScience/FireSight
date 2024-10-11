@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 THREE.Cache.enabled = true;
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Mesh, ShaderMaterial } from 'three';
 import { useFrame } from '@react-three/fiber';
 import vertexShader from '../utils/shaders/vertex.glsl';
@@ -32,8 +32,7 @@ export function VolumeShader() {
   const [flatShape, setFlatShape] = useState([1,1])
 
   const [minmax, setMinMax] = useState<[number, number]>([0.0, 1.0]);
-  const [uv, setUv] = useState<THREE.Vector2>(null)
-  const [normal, setNormal] = useState<THREE.Vector3>(null)
+
   const meshRef = useRef<CustomMesh>(null);
   
   const containerId = 'myPanePlugin';
@@ -113,42 +112,28 @@ export function VolumeShader() {
   useFrame(({ camera }) => {
     if (meshRef.current) {
       const material = meshRef.current.material;
-      // First, handle volumeText readiness and other updates
+      // Update volume texture
       if (volumeText) {
         material.uniforms.map.value = volumeText;
-        material.needsUpdate = true;
         meshRef.current.visible = true;
       } else {
         meshRef.current.visible = false;
       }
-      // Finally, update the camera position uniform
+      // Update dynamic uniforms
+      material.uniforms.threshold.value = threshold;
+      material.uniforms.flip.value = thresholdMode;
+      material.uniforms.cmap.value = cmap_texture;
+      material.uniforms.flatBounds.value.set(lonmin, lonmax, tmin, tmax);
+      material.uniforms.vertBounds.value.set(latmin, latmax);
+      material.uniforms.intensity.value = alpha_intensity;
+      // Update scale and camera position
+      material.uniforms.scale.value.copy(volumeShape);
       material.uniforms.cameraPos.value.copy(camera.position);
+      // Mark material for update
+      material.needsUpdate = true;
     }
   });
-  // TODO: Why the mesh dimensions are not correct?
-  const shaderMaterial = useMemo(() => ({
-    glslVersion: THREE.GLSL3,
-    uniforms: {
-        map: { value: volumeText },
-        cameraPos: { value: new THREE.Vector3() },
-        threshold: { value: threshold },
-        steps: { value: 200 },
-        scale: { value: volumeShape },
-        flip: { value: thresholdMode },
-        cmap: { value: cmap_texture },
-        flatBounds: { value: new THREE.Vector4(lonmin, lonmax, tmin, tmax) },
-        vertBounds: { value: new THREE.Vector2(latmin, latmax) },
-        intensity: {value: alpha_intensity}
-    },
-    vertexShader: vertexShader,
-    fragmentShader: fragmentShader,
-    transparent: true,
-    blending: THREE.NormalBlending,
-    depthWrite: false,
-    side: THREE.BackSide,
-}), [volumeText, threshold, volumeShape, thresholdMode, cmap_texture, lonmin, lonmax, latmin, tmin, tmax, alpha_intensity]);
-
-
+  
   return (
     <>
     {do_compute && (
@@ -171,14 +156,37 @@ export function VolumeShader() {
             <boxGeometry args={[2, 2, 2]} />
             <shaderMaterial
               attach="material"
-              args={[shaderMaterial]}
+              args={[
+                ({
+                  glslVersion: THREE.GLSL3,
+                  uniforms: {
+                    map: { value: new THREE.Data3DTexture() },
+                    cameraPos: { value: new THREE.Vector3() },
+                    threshold: { value: 0.0 },
+                    steps: { value: 150 },
+                    scale: { value: new THREE.Vector3(1, 1, 1) },
+                    flip: { value: true },
+                    cmap: { value: new THREE.DataTexture() },
+                    flatBounds: { value: new THREE.Vector4() },
+                    vertBounds: { value: new THREE.Vector2() },
+                    intensity: { value: 1.0 },
+                  },
+                  vertexShader: vertexShader,
+                  fragmentShader: fragmentShader,
+                  transparent: true,
+                  blending: THREE.NormalBlending,
+                  depthWrite: false,
+                  side: THREE.BackSide,
+                })
+              ]}
             />
           </mesh>
       
-        <mesh onClick={(event)=>{setUv(x=>event.uv),setNormal(x=>event.normal)}} castShadow >
-          <boxGeometry args={[volumeShape.x, volumeShape.y, volumeShape.z]} />
-          <meshStandardMaterial transparent color={''} visible={false} />
-        </mesh>
+          <mesh castShadow>
+              <boxGeometry args={[volumeShape.x, volumeShape.y, volumeShape.z]} />
+              <meshStandardMaterial transparent color={''} visible={false} />
+          </mesh>
+
         <FrameBoxed
             width={volumeShape.x + 0.05} 
             height={volumeShape.y + 0.05} 

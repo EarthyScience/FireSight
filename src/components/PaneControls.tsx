@@ -339,7 +339,7 @@ export function useControlPane(containerID: string) {
     value: false
   })
 
-  useEffect(() => {
+  useMemo(() => {
     // Update background color
     document.body.style.backgroundColor = bgcolor;
   }, [bgcolor]);
