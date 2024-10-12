@@ -1,7 +1,0 @@
-.pane {
-    position: fixed;
-    top: 21%;
-    left: 25%;
-    transform: translate(-50%, -50%);
-    z-index: 100000;
-  }

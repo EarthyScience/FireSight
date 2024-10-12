@@ -4,8 +4,7 @@ import { usePaneFolder, usePaneInput, useTweakpane } from '../../pane'
 import { All_vars } from '../utils/variables_forcing.json'
 // import { All_vars } from '../utils/variables_televit.json'
 // import { All_vars } from '../utils/variables.json'
-
-import { createTexture } from '../utils/colormap'
+// import { createTexture } from '../utils/colormap'
 
 const analysisMethods = [
   {
@@ -22,12 +21,12 @@ function normalizeInterval(value: number, a: number, b: number) {
 }
 
 export function useControlPane(containerID: string) {
-    const container = document.getElementById(containerID);
+    const container = document.getElementById(containerID) ?? undefined;
     const optionsVars = useMemo(() => All_vars.map((element) => ({
     text: element,
     value: element
   })), []);
-  // TODO: append 'default' variable name, read variables directrly from zarr store
+  // TODO: append 'default' variable name, read variables directly from zarr store
 
   const colormaps = useMemo(() => ['viridis', 'plasma', 'inferno', 'magma', 'Accent', 'Blues',
     'CMRmap', 'twilight', 'tab10', 'gist_earth', 'cividis',
@@ -322,7 +321,7 @@ export function useControlPane(containerID: string) {
     options: analysisMethods,
     value: 'default'
   })
-
+  console.log(analysisMethod)
   const [analysis1] = usePaneInput(analysisFolder, 'var1', {
     label: 'Variable 1',
     options: optionsVars,
@@ -344,13 +343,10 @@ export function useControlPane(containerID: string) {
     document.body.style.backgroundColor = bgcolor;
   }, [bgcolor]);
 
-  const cmap_texture = useMemo(() => createTexture(cmap_texture_name, alpha, nan_color, nan_alpha), [cmap_texture_name, alpha, nan_color, nan_alpha]);
-
   return {
     thresholdMode,
     threshold,
     cmap_texture_name,
-    cmap_texture,
     drei_var,
     timeSlice,
     lonmax,
@@ -359,11 +355,14 @@ export function useControlPane(containerID: string) {
     latmin,
     tmax,
     tmin,
-    analysisMethod,
+    // analysisMethod,
     analysis1,
     analysis2,
     do_compute,
     color_axes,
-    alpha_intensity
+    alpha_intensity,
+    alpha, 
+    nan_color, 
+    nan_alpha
   }
 }

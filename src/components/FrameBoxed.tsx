@@ -1,6 +1,9 @@
+import * as React from 'react';
 import * as THREE from 'three';
 import { Text } from '@react-three/drei';
-export function FrameBoxed({ 
+import { useMemo } from 'react';
+
+function FrameBoxed({ 
   width = 2.2,
   height = 2.2,
   depth = 2.2,
@@ -9,8 +12,10 @@ export function FrameBoxed({
   color = "#c8cdd2",
   sepFactor = 1.9,
 }) {
-  const boxGeometry = new THREE.BoxGeometry(width, height, depth);
-  const edges = new THREE.EdgesGeometry(boxGeometry); // Extract only the edges (no diagonals)
+
+  const boxGeometry = useMemo(() => new THREE.BoxGeometry(width, height, depth), [width, height, depth]);
+  const edges = useMemo(() => new THREE.EdgesGeometry(boxGeometry), [boxGeometry]); // Extract only the edges (no diagonals)
+
 
   return (
   <group position={new THREE.Vector3(...origin)}>
@@ -65,3 +70,4 @@ export function FrameBoxed({
 </group>
 );
 }
+export default React.memo(FrameBoxed);

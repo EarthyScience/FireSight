@@ -1,10 +1,7 @@
 import * as THREE from 'three';
 THREE.Cache.enabled = true;
-import { useEffect, useRef, useState } from 'react';
-import { Mesh, ShaderMaterial } from 'three';
-import { useFrame } from '@react-three/fiber';
+import { useEffect, useState } from 'react';
 import vertexShader from '../utils/shaders/vertex.glsl';
-import fragmentShader from '../utils/shaders/fragment.glsl';
 import flatFragment from '../utils/shaders/fragmentFlat.glsl';
 import ZarrLoaderLRU from './ZarrLoaderLRU';
 import { genRand } from '../utils/colormap';
@@ -13,31 +10,27 @@ import { updateMetadataDescription } from '../utils/metadata';
 import { updateColorbar, getColors, rgbToHex } from '../utils/updateColorbar';
 import { useControlPane } from './PaneControls';
 import { Analyzer } from './AnalysisFunctions';
-import { FrameBoxed } from './FrameBoxed';
-
-type CustomMesh = Mesh & {
-  material: ShaderMaterial;
-};
+import FrameBoxed from './FrameBoxed';
+import VolumeMesh from './VolumeMesh';
+import { updateTexture } from '../utils/colormap'
 
 export function VolumeShader() {
   const [meta, setMeta] = useState({});
-  const [volumeData, setVolumeData] = useState(() => genRand(30));
+  const [volumeData, setVolumeData] = useState(() => genRand(50));
   const [volumeText, setVolumeText] = useState<THREE.Data3DTexture | null>(null);
   const [volumeShape, setVolumeShape] = useState(new THREE.Vector3(2, 2, 2));
   const [isFlatTexture, setIsFlatTexture] = useState(false);
   const [flatText, setFlatText] = useState<THREE.DataTexture | null>(null);
   const [flatShape, setFlatShape] = useState([1, 1]);
   const [minmax, setMinMax] = useState<[number, number]>([0.0, 1.0]);
+  const [cmapTexture, setCmapTexture] = useState<THREE.DataTexture | null>(null);
 
-  const meshRef = useRef<CustomMesh>(null);
   const containerId = 'myPanePlugin';
-
   // Get control pane values
   const {
-    threshold,
     thresholdMode,
+    threshold,
     cmap_texture_name,
-    cmap_texture,
     drei_var,
     timeSlice,
     lonmax,
@@ -46,12 +39,15 @@ export function VolumeShader() {
     latmin,
     tmax,
     tmin,
-    analysisMethod,
+    // analysisMethod,
     analysis1,
     analysis2,
     do_compute,
     color_axes,
     alpha_intensity,
+    alpha, 
+    nan_color, 
+    nan_alpha
   } = useControlPane(containerId);
 
   useEffect(() => {
@@ -74,7 +70,7 @@ export function VolumeShader() {
   useEffect(() => {
     // Create volumeTexture if 3D data
     if (!volumeData) {
-      setVolumeData(genRand(30));
+      setVolumeData(genRand(50));
       return;
     }
     if (volumeData.shape.length !== 3) {
@@ -101,29 +97,16 @@ export function VolumeShader() {
     setFlatText(newText);
   }, [isFlatTexture, volumeData]);
 
-  useFrame(({ camera }) => {
-    if (meshRef.current) {
-      const material = meshRef.current.material;
-      // Update volume texture and visibility
-      material.uniforms.map.value = volumeText || new THREE.Data3DTexture();
-      meshRef.current.visible = !!volumeText;
-
-      // Update dynamic uniforms
-      Object.assign(material.uniforms, {
-        threshold: { value: threshold },
-        flip: { value: thresholdMode },
-        cmap: { value: cmap_texture },
-        flatBounds: { value: new THREE.Vector4(lonmin, lonmax, tmin, tmax) },
-        vertBounds: { value: new THREE.Vector2(latmin, latmax) },
-        intensity: { value: alpha_intensity },
-        scale: { value: volumeShape },
-        cameraPos: { value: camera.position },
-      });
-
-      // Mark material for update
-      material.needsUpdate = true;
-    }
-  });
+  useEffect(() => {
+    const updatedTexture = updateTexture(
+      cmapTexture,      // Pass the current texture
+      cmap_texture_name, 
+      alpha, 
+      nan_color, 
+      nan_alpha
+    );
+    setCmapTexture(updatedTexture);
+  }, [cmap_texture_name, cmapTexture, alpha, nan_color, nan_alpha]);
 
   return (
     <>
@@ -144,33 +127,17 @@ export function VolumeShader() {
       <group position={[0, 1.01, 0]}>
         {!isFlatTexture ? (
           <>
-            <mesh ref={meshRef} rotation-y={Math.PI / 2}>
-              <boxGeometry args={[2, 2, 2]} />
-              <shaderMaterial
-                attach="material"
-                args={[{
-                  glslVersion: THREE.GLSL3,
-                  uniforms: {
-                    map: { value: new THREE.Data3DTexture() },
-                    cameraPos: { value: new THREE.Vector3() },
-                    threshold: { value: 0.0 },
-                    steps: { value: 150 },
-                    scale: { value: new THREE.Vector3(1, 1, 1) },
-                    flip: { value: true },
-                    cmap: { value: new THREE.DataTexture() },
-                    flatBounds: { value: new THREE.Vector4() },
-                    vertBounds: { value: new THREE.Vector2() },
-                    intensity: { value: 1.0 },
-                  },
-                  vertexShader,
-                  fragmentShader,
-                  transparent: true,
-                  blending: THREE.NormalBlending,
-                  depthWrite: false,
-                  side: THREE.BackSide,
-                }]}
-              />
-            </mesh>
+            <VolumeMesh
+              volumeShape={volumeShape}
+              volumeTexture={volumeText}
+              threshold={threshold}
+              steps={150}
+              mode={thresholdMode}
+              cmap_texture={cmapTexture!}
+              lo_tbounds={new THREE.Vector4(lonmin, lonmax, tmin, tmax)}
+              latbounds={new THREE.Vector2(latmin, latmax)}
+              intensity={alpha_intensity}
+            />
             <mesh castShadow>
               <boxGeometry args={[volumeShape.x, volumeShape.y, volumeShape.z]} />
               <meshStandardMaterial transparent color={''} visible={false} />
@@ -190,7 +157,7 @@ export function VolumeShader() {
                 glslVersion: THREE.GLSL3,
                 uniforms: {
                   map: { value: flatText },
-                  cmap: { value: cmap_texture },
+                  cmap: { value: cmapTexture!},
                   threshold: { value: threshold },
                 },
                 vertexShader,

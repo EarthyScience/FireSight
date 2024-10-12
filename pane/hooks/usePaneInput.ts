@@ -78,23 +78,23 @@ export function usePaneInput<T extends Object, K extends keyof T>(
   }
 
   useLayoutEffect(() => {
-    const pane = parentRef.current?.instance
-    if (pane == null) return
-
+    const pane = parentRef.current?.instance;
+    if (!pane) return;
+  
     const handler: (event: TpChangeEvent<T[K]>) => void = onChange
       ? (event) => callbackRef.current!(event)
-      : (event) => set(event.value)
-
+      : (event) => set(event.value);
+      
     const input = pane
       .addBinding(parentRef.current!.params, key, BindingParams)
-      .on('change', handler)
-      
-    inputRef.current = input
-    // inputRef.current.controller.importState.arguments = input
+      .on('change', handler);
+    // Directly assert the type
+    inputRef.current = input as unknown as InputBindingApi<unknown, T[K]>;
+  
     return () => {
-      if (input.element) input.dispose()
-    }
-  }, [key, onChange])
+      if (input.element) input.dispose();
+    };
+  }, [key, onChange]);  
 
   return [onChange == null ? value : undefined, setValue, inputRef]
 }
