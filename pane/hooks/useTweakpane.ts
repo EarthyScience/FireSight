@@ -7,7 +7,7 @@ interface PaneConfig {
   /**
    * The custom container element of the pane.
    */
-  container?: HTMLElement | null
+  container?: HTMLElement
   /**
    * The default expansion of the pane.
    */

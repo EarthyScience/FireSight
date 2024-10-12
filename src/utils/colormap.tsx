@@ -2,7 +2,7 @@ import * as THREE from 'three';
 // https://github.com/vasturiano/three-globe/blob/master/src/utils/color-utils.js
 import { evaluate_cmap } from 'js-colormaps-es';
 import { NestedArray } from 'zarr';
-import { rgbToHex } from './updateColorbar';
+// import { rgbToHex } from './updateColorbar';
 
 export function minMax(values: number[]): { min: number | undefined, max: number | undefined } {
     // Filter out NaN values
@@ -13,7 +13,13 @@ export function minMax(values: number[]): { min: number | undefined, max: number
     return { min, max };
 }
 
-export function createTexture(palette: string, alpha: number, nan_color: string, nan_alpha: number) {
+export function updateTexture(
+  texture: THREE.DataTexture | null, 
+  palette: string, 
+  alpha: number, 
+  nan_color: string, 
+  nan_alpha: number
+): THREE.DataTexture {
   const unitInterval = Array.from({ length: 255 }, (_, index) => index / 254);
   const rgbv = unitInterval.map(value => evaluate_cmap(value, palette, false));
   const colData = new Uint8Array((rgbv.length + 1) * 4);
@@ -27,16 +33,24 @@ export function createTexture(palette: string, alpha: number, nan_color: string,
   }
 
   // Add the last color as the nan, this should be done better!
-  const to_nan = hexToRgb(nan_color)
+  const to_nan = hexToRgb(nan_color);
   const lastIndex = rgbv.length * 4;
   colData[lastIndex] = to_nan[0];
   colData[lastIndex + 1] = to_nan[1];
   colData[lastIndex + 2] = to_nan[2];
   colData[lastIndex + 3] = nan_alpha;
 
-  const texture = new THREE.DataTexture(colData, rgbv.length + 1, 1, THREE.RGBAFormat);
-  texture.needsUpdate = true;
-  return texture;
+  if (texture) {
+    // Update the existing texture data
+    texture.image.data.set(colData);
+    texture.needsUpdate = true;
+    return texture;
+  } else {
+    // Create a new texture if not already available
+    const newTexture = new THREE.DataTexture(colData, rgbv.length + 1, 1, THREE.RGBAFormat);
+    newTexture.needsUpdate = true;
+    return newTexture;
+  }
 }
 
 
