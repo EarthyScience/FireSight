@@ -7,12 +7,10 @@ uniform mat4 projectionMatrix;
 
 in vec3 vOrigin;
 in vec3 vDirection;
-
 out vec4 color;
 
 uniform sampler3D map;
 uniform sampler2D cmap;
-
 uniform vec3 scale;
 uniform float threshold;
 uniform float steps;
@@ -34,8 +32,8 @@ vec2 hitBox(vec3 orig, vec3 dir) {
     return vec2(t0, t1);
 }
 
-float sample1( vec3 p ) {
-    return texture( map, p ).r;
+float sample1(vec3 p) {
+    return texture(map, p).r;
 }
 
 #define epsilon 0.0001
@@ -55,6 +53,7 @@ void main() {
 
     vec4 accumColor = vec4(0.0);
     float alphaAcc = 0.0;
+
     for (float t = bounds.x; t < bounds.y; t += delta) {
         if (p.x > -flatBounds.x || p.x < -flatBounds.y) {
             p += rayDir * delta;
@@ -70,7 +69,6 @@ void main() {
         }
 
         float d = sample1(p / scale + 0.5);
-
         bool cond = (d > threshold) || (d == 0.0 && threshold == 0.0);
         cond = flip ? !cond : cond;
 

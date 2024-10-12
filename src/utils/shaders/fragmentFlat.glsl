@@ -7,7 +7,7 @@ uniform mat4 projectionMatrix;
 
 out vec4 color;
 
-in vec2 Vuv;
+in vec2 vUv;
 
 uniform sampler2D map;
 uniform sampler2D cmap;
@@ -22,7 +22,7 @@ uniform vec2 vertBounds;
 
 void main(){
 
-    float strength = texture2D(map, Vuv).r;
+    float strength = texture2D(map, vUv).r;
 
     color = vec4(strength,0.,0.,1.);
 

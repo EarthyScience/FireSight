@@ -59,7 +59,7 @@ export function genRand(count: number) {
       Array.from({ length: count }, () =>
           Array.from({ length: count }, () => {
               // Randomly insert NaN values (e.g., 10% chance)
-              if (Math.random() < 0.6) {
+              if (Math.random() < 0.3) {
                   return NaN;
               }
               return Math.random();
