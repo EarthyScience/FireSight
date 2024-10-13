@@ -1,16 +1,14 @@
 import * as THREE from 'three';
 import { NestedArray, TypedArray } from 'zarr';
-// Ensure the newVarData function uses the correct types
 
 export function newVarData(varValues: NestedArray<TypedArray>): [THREE.Data3DTexture, number[], [number, number]] {
     if (!varValues.shape) {
-        // console.log("here !")
-        // console.log(varValues.shape)
-        return;
+        throw new Error("varValues does not have a shape property.");
     }
-   
+
     let [lz, ly, lx] = [1, 1, 1]; // Default to 1 for each dimension
-    
+
+    // Determine the dimensions based on the shape
     if (varValues.shape.length === 3) {
         [lz, ly, lx] = varValues.shape;
     } else if (varValues.shape.length === 2) {
@@ -21,35 +19,39 @@ export function newVarData(varValues: NestedArray<TypedArray>): [THREE.Data3DTex
         ly = 1; // Set height to 1 for 1D data
         lz = 1; // Set depth to 1 for 1D data
     } else {
-        console.error('Unsupported shape:', varValues.shape);
-        return;
+        throw new Error('Unsupported shape: ' + JSON.stringify(varValues.shape));
     }
 
     const volData = new Uint8Array(lx * ly * lz);
-    const flat = varValues.flatten().reverse();
+    
+    // Convert the flattened array to a regular number array
+    const flat = Array.from(varValues.flatten().reverse()); // Convert to number[] 
+
+    // Calculate max and min values
     const maxVal = flat.reduce((a, b) => {
         if (isNaN(a)) return b;
         if (isNaN(b)) return a;
-        return a > b ? a : b;
-    });
+        return Math.max(a, b);
+    }, -Infinity);
+
     const minVal = flat.reduce((a, b) => {
         if (isNaN(a)) return b;
         if (isNaN(b)) return a;
-        return a > b ? b : a;
-    });
+        return Math.min(a, b);
+    }, Infinity);
 
     for (let i = 0; i < flat.length; i++) {
-        const normalizedValue = isNaN(flat[i]) ? 255 : (flat[i] - minVal) / (maxVal - minVal) * 255;
-        
+        const normalizedValue = isNaN(flat[i]) ? 255 : Math.round((flat[i] - minVal) / (maxVal - minVal) * 255);
+
         if (varValues.shape.length === 1) {
-            // For 1D data, duplicate along y and z!
+            // For 1D data, duplicate along y and z
             for (let y = 0; y < ly; y++) {
                 for (let z = 0; z < lz; z++) {
                     volData[i + y * lx + z * lx * ly] = normalizedValue;
                 }
             }
         } else if (varValues.shape.length === 2) {
-            // For 2D data, duplicate along z, also here!
+            // For 2D data, duplicate along z
             for (let z = 0; z < lz; z++) {
                 volData[i + z * lx * ly] = normalizedValue;
             }
@@ -66,36 +68,41 @@ export function newVarData(varValues: NestedArray<TypedArray>): [THREE.Data3DTex
     volTexture.unpackAlignment = 1;
     volTexture.needsUpdate = true;
 
-    return [volTexture, [lz, ly, lx], [minVal, maxVal]]; // Return the new shape
+    // Return the texture and the computed values
+    return [volTexture, [lz, ly, lx], [minVal, maxVal]];
 }
 
 export function new2DTexture(varValues: NestedArray<TypedArray>): [THREE.DataTexture, number[], [number, number]] {
     if (!varValues.shape) {
-        // console.log("here !")
-        // console.log(varValues.shape)
-        return;
+        throw new Error("varValues does not have a shape property.");
     }
-   
+
     let [ly, lx] = [1, 1];
     [ly, lx] = varValues.shape;
 
     const outData = new Uint8Array(lx * ly);
-    const flat = varValues.flatten().reverse();
+    
+    // Convert the flattened array to a regular number array
+    const flat = Array.from(varValues.flatten().reverse()); // Convert to number[]
+
+    // Calculate max and min values
     const maxVal = flat.reduce((a, b) => {
         if (isNaN(a)) return b;
         if (isNaN(b)) return a;
-        return a > b ? a : b;
-    });
+        return Math.max(a, b);
+    }, -Infinity);
+
     const minVal = flat.reduce((a, b) => {
         if (isNaN(a)) return b;
         if (isNaN(b)) return a;
-        return a > b ? b : a;
-    });
+        return Math.min(a, b);
+    }, Infinity);
 
     for (let i = 0; i < flat.length; i++) {
-        const normalizedValue = parseInt((flat[i] - minVal) / (maxVal - minVal) * 255);
-        outData[i] = normalizedValue
+        const normalizedValue = Math.round((flat[i] - minVal) / (maxVal - minVal) * 255);
+        outData[i] = normalizedValue;
     }
+
     const newTexture = new THREE.DataTexture(outData, lx, ly);
     newTexture.format = THREE.RedFormat;
     newTexture.minFilter = THREE.NearestFilter;
@@ -103,5 +110,6 @@ export function new2DTexture(varValues: NestedArray<TypedArray>): [THREE.DataTex
     newTexture.unpackAlignment = 1;
     newTexture.needsUpdate = true;
 
+    // Return the texture and the computed values
     return [newTexture, [ly, lx], [minVal, maxVal]];
 }
