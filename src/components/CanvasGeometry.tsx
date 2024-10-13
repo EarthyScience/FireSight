@@ -2,7 +2,7 @@ import * as THREE from 'three'
 THREE.Cache.enabled = true;
 import { Canvas } from '@react-three/fiber';
 import { VolumeShader } from './VolumeShader'
-import { Perf } from 'r3f-perf'
+// import { Perf } from 'r3f-perf'
 
 import {
   AccumulativeShadows,

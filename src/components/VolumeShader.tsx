@@ -39,14 +39,13 @@ export function VolumeShader() {
     latmin,
     tmax,
     tmin,
-    // analysisMethod,
     var1,
     var2,
     compute,
     color_axes,
     alpha_intensity,
-    alpha, 
-    nan_color, 
+    alpha,
+    nan_color,
     nan_alpha
   } = useControlPane(containerId);
 

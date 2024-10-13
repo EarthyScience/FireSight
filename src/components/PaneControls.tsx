@@ -6,16 +6,6 @@ import { All_vars } from '../utils/variables_forcing.json'
 // import { All_vars } from '../utils/variables.json'
 // import { createTexture } from '../utils/colormap'
 
-const analysisMethods = [
-  {
-    text:"Pearsons R",
-    value: "r"
-  },
-  {
-    text: "-",
-    value:"mean"
-  }
-]
 function normalizeInterval(value: number, a: number, b: number) {
   return (2 * (value - a)) / (b - a) - 1;
 }
@@ -336,13 +326,14 @@ export function useControlPane(containerID: string) {
       setCompute(event.value);
     });
 
-    const mnmx = folderAnalytics.addTab({
+    const tabs_mnmx = folderAnalytics.addTab({
       pages: [
         {title: 'min'},
         {title: 'max'},
         {title: 'mean'},
       ],
     });
+    console.log(tabs_mnmx)
 
     return () => {
       if (binding_lomn) {
@@ -391,33 +382,6 @@ export function useControlPane(containerID: string) {
     };
   }, [pane]);
 
-  // const analysisFolder = usePaneFolder(pane, {
-  //   title:"Analytics",
-  //   expanded: false,
-  // })
-
-  // const [analysisMethod] = usePaneInput(analysisFolder, 'analysis', {
-  //   label: 'Method',
-  //   options: analysisMethods,
-  //   value: 'default'
-  // })
-  // console.log(analysisMethod)
-  // const [analysis1] = usePaneInput(analysisFolder, 'var1', {
-  //   label: 'Variable 1',
-  //   options: optionsVars,
-  //   value: 'default'
-  // })
-
-  // const [analysis2] = usePaneInput(analysisFolder, 'var2', {
-  //   label: 'Variable 2',
-  //   options: optionsVars,
-  //   value: 'default'
-  // })
-  // const [do_compute] = usePaneInput(analysisFolder, 'compute', {
-  //   label: 'Apply function',
-  //   value: false
-  // })
-
   useEffect(() => {
     // Update background color
     document.body.style.backgroundColor = bgcolor;
@@ -435,7 +399,6 @@ export function useControlPane(containerID: string) {
     latmin,
     tmax,
     tmin,
-    // analysisMethod,
     var1,
     var2,
     compute,
