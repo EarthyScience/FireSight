@@ -2,7 +2,7 @@ import * as THREE from 'three'
 THREE.Cache.enabled = true;
 import { Canvas } from '@react-three/fiber';
 import { VolumeShader } from './VolumeShader'
-import { Perf } from 'r3f-perf'
+// import { Perf } from 'r3f-perf'
 
 import {
   AccumulativeShadows,
@@ -16,7 +16,7 @@ export function CanvasGeometry() {
   return (
     <div className='canvas'>
       <Canvas shadows camera={{ position: [-4.5, 3, 4.5], fov: 50 }}>
-        <Perf position="bottom-left" style={{ bottom: '3.25rem' }} />
+        {/* <Perf position="bottom-left" style={{ bottom: '3.25rem' }} /> */}
           <VolumeShader />          
           <OrbitControls 
             enableDamping={true} 
