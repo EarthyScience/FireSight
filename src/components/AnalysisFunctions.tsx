@@ -1,9 +1,9 @@
-// import React from 'react'
-import { useState, useEffect } from 'react';
-import {ZarrLoaderAnalysis} from './ZarrLoaderLRU';
+import { useState, useEffect, Dispatch, SetStateAction } from 'react';
+import { ZarrLoaderAnalysis } from './ZarrLoaderLRU';
 import { NestedArray, TypedArray } from 'zarr';
-import { Dispatch, SetStateAction } from 'react';
+import { genRand } from '../utils/colormap';
 
+// Check if two arrays are equal
 function arraysEqual<T>(arr1: T[], arr2: T[]): boolean {
     if (arr1.length !== arr2.length) {
         return false;
@@ -16,6 +16,7 @@ function arraysEqual<T>(arr1: T[], arr2: T[]): boolean {
     return true;
 }
 
+// Calculate Pearson's R
 function pearsonsR<T extends number>(arr1: T[], arr2: T[]): number {
     const n = arr1.length;
 
@@ -41,49 +42,71 @@ function pearsonsR<T extends number>(arr1: T[], arr2: T[]): number {
     return numerator / denominator;
 }
 
-const PearsonsR = (array1, array2, setData)=>{
-    if (!arraysEqual(array1.shape,array2.shape)){
-        console.log("Incompatible Shapes")
+// Update the PearsonsR function to accept proper types
+const PearsonsR = (
+    array1: NestedArray<TypedArray>,
+    array2: NestedArray<TypedArray>,
+    setData: Dispatch<SetStateAction<NestedArray<TypedArray>>>
+) => {
+    if (!arraysEqual(array1.shape, array2.shape)) {
+        console.log("Incompatible Shapes");
         return;
     }
-    const empty = new Float32Array(array1.shape[1]*array1.shape[2])
-    const output = new NestedArray(empty, [array1.shape[1],array1.shape[2]])
-    for (let y = 0; y < array1.shape[1]; y++){
-        for (let x = 0; x < array1.shape[2]; x++){
-            const arr1 = array1.get([null,y,x])
-            const arr2 = array2.get([null,y,x])
-            const R = pearsonsR(arr1.flatten(), arr2.flatten())
-            output.set([y,x],R)
+
+    // Prepare output array
+    const empty = new Float32Array(array1.shape[1] * array1.shape[2]);
+    const output = new NestedArray(empty, [array1.shape[1], array1.shape[2]]);
+
+    for (let y = 0; y < array1.shape[1]; y++) {
+        for (let x = 0; x < array1.shape[2]; x++) {
+            const arr1 = array1.get([null, y, x]);
+            const arr2 = array2.get([null, y, x]);
+
+            // Convert TypedArray to number[]
+            const flatArr1 = Array.from((arr1 as NestedArray<TypedArray>).flatten());
+            const flatArr2 = Array.from((arr2 as NestedArray<TypedArray>).flatten());
+
+            const R = pearsonsR(flatArr1, flatArr2);
+            output.set([y, x], R);
         }
     }
-    setData(output)
-}
+    setData(output);
+};
 
+// Define the props for the Analyzer component
 interface AnalyzerProps {
     variable1: string | null;
     variable2: string | null;
     slice: {
-      min: number;
-      max: number;
+        min: number;
+        max: number;
     };
     setData: Dispatch<SetStateAction<NestedArray<TypedArray>>>;
-  }
-
-export const Analyzer = ({variable1, variable2, slice, setData}: AnalyzerProps) =>{
-    console.log(variable1)
-    console.log(variable2)
-    const [data1, setData1] = useState()
-    const [data2, setData2] = useState()
-    ZarrLoaderAnalysis({variable:variable1, setData:setData1, slice:{min:0, max:24}})
-    ZarrLoaderAnalysis({variable:variable2, setData:setData2, slice:{min:0, max:24}})
-
-    useEffect(()=>{
-        if (!data1|| !data2){
-            return
-        }
-        console.log()
-        PearsonsR(data1,data2,setData)
-
-    },[data1,data2]);
-    return null;
 }
+
+// Main Analyzer component
+export const Analyzer = ({
+    variable1,
+    variable2,
+    slice,
+    setData,
+}: AnalyzerProps) => {
+    console.log(variable1);
+    console.log(variable2);
+    
+    // Initialize with a random NestedArray to avoid undefined
+    const [data1, setData1] = useState(() => genRand(40));
+    const [data2, setData2] =  useState(() => genRand(40));
+    
+    ZarrLoaderAnalysis({ variable: variable1, setData: setData1, slice });
+    ZarrLoaderAnalysis({ variable: variable2, setData: setData2, slice });
+
+    useEffect(() => {
+        if (!data1 || !data2) {
+            return;
+        }
+        PearsonsR(data1, data2, setData);
+    }, [data1, data2]);
+
+    return null;
+};
