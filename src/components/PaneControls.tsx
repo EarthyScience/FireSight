@@ -80,6 +80,9 @@ export function useControlPane(containerID: string) {
   const [thresholdMode, setthresholdMode] = useState(pane.current.params.thresholdMode);
   const [threshold, setthreshold] = useState(pane.current.params.threshold);
   const [timeSlice, settimeSlice] = useState(pane.current.params.timeSlice);
+  const [compute, setCompute] = useState(pane.current.params.compute);
+  const [var1, setVar1] = useState(pane.current.params.var1);
+  const [var2, setVar2] = useState(pane.current.params.var2);
 
 
   const folderVars = usePaneFolder(pane, {
@@ -94,22 +97,9 @@ export function useControlPane(containerID: string) {
   })
   
   const folderColors = usePaneFolder(pane, {
-    title: 'Colors / Colormaps',
+    title: 'Colors',
     expanded: false,
   })
-
-  const [bgcolor] = usePaneInput(folderColors, 'backgroundcolor', {
-    label: 'Background Color',
-    view: 'color',
-    value: "#2d4967",
-  })
-
-  const [color_axes] = usePaneInput(folderColors, 'axes', {
-    label: 'Axes',
-    view: 'color',
-    value: "#c8cdd2",
-  })
-
   const [cmap_texture_name] = usePaneInput(folderColors, 'cmap', {
     label: 'Colormap',
     options: colormaps_array,
@@ -121,6 +111,17 @@ export function useControlPane(containerID: string) {
     min: 0,
     max: 255,
     step: 1,
+  })
+  const [bgcolor] = usePaneInput(folderColors, 'backgroundcolor', {
+    label: 'Background Color',
+    view: 'color',
+    value: "#2d4967",
+  })
+
+  const [color_axes] = usePaneInput(folderColors, 'axes', {
+    label: 'Axes',
+    view: 'color',
+    value: "#c8cdd2",
   })
 
   const [nan_color] = usePaneInput(folderColors, 'nan_color', {
@@ -275,6 +276,74 @@ export function useControlPane(containerID: string) {
       settmax(normalizedValue);
     });
 
+    const folderAnalytics = pane_tab.addFolder({
+      title: 'Analytics',
+      expanded: false,
+    });
+
+    const stats = folderAnalytics.addTab({
+      pages: [
+        {title: 'r'},
+        {title: 'mask'},
+      ],
+    });
+
+    const PARAMS = {
+      message: '',
+    };
+    const paramDesc = stats.pages[0].addBinding(PARAMS, 'message',
+        {
+        label: 'Pearson correlation',
+        }
+        );
+    paramDesc.disabled = true;
+
+    const binding_rv1 = stats.pages[0].addBinding(pane.current.params, 'var1', {
+        label: 'Variable 1',
+        options: optionsVars,
+        value: 'default'
+    })
+
+    binding_rv1.on('change', (event) => {
+      setVar1(event.value);
+    });
+
+    const binding_rv2 = stats.pages[0].addBinding(pane.current.params, 'var2', {
+        label: 'Variable 2',
+        options: optionsVars,
+        value: 'default'
+    })
+
+    binding_rv2.on('change', (event) => {
+      setVar2(event.value);
+    });
+
+    const binding_rcompute = stats.pages[0].addBinding(pane.current.params, 'compute', {
+      label: 'Apply function',
+      value: false
+    });
+
+    binding_rcompute.on('change', (event) => {
+      setCompute(event.value);
+    });
+
+    const binding_mask_compute = stats.pages[1].addBinding(pane.current.params, 'compute', {
+      label: 'Apply function',
+      value: false
+    });
+
+    binding_mask_compute.on('change', (event) => {
+      setCompute(event.value);
+    });
+
+    const mnmx = folderAnalytics.addTab({
+      pages: [
+        {title: 'min'},
+        {title: 'max'},
+        {title: 'mean'},
+      ],
+    });
+
     return () => {
       if (binding_lomn) {
       binding_lomn.dispose(); // Dispose of the binding on cleanup
@@ -303,6 +372,18 @@ export function useControlPane(containerID: string) {
       if (binding_interval) {
         binding_interval.dispose();
         }
+      if (binding_mask_compute) {
+        binding_mask_compute.dispose();
+        }
+      if (binding_rcompute) {
+        binding_rcompute.dispose();
+        }
+      if (binding_rv1) {
+        binding_rv1.dispose();
+        }
+      if (binding_rv2) {
+        binding_rv2.dispose();
+        }
       if (pane_tab) {
       pane_tab.dispose();
       }
@@ -310,33 +391,32 @@ export function useControlPane(containerID: string) {
     };
   }, [pane]);
 
+  // const analysisFolder = usePaneFolder(pane, {
+  //   title:"Analytics",
+  //   expanded: false,
+  // })
 
-  const analysisFolder = usePaneFolder(pane, {
-    title:"Analytics",
-    expanded: false,
-  })
+  // const [analysisMethod] = usePaneInput(analysisFolder, 'analysis', {
+  //   label: 'Method',
+  //   options: analysisMethods,
+  //   value: 'default'
+  // })
+  // console.log(analysisMethod)
+  // const [analysis1] = usePaneInput(analysisFolder, 'var1', {
+  //   label: 'Variable 1',
+  //   options: optionsVars,
+  //   value: 'default'
+  // })
 
-  const [analysisMethod] = usePaneInput(analysisFolder, 'analysis', {
-    label: 'Method',
-    options: analysisMethods,
-    value: 'default'
-  })
-  console.log(analysisMethod)
-  const [analysis1] = usePaneInput(analysisFolder, 'var1', {
-    label: 'Variable 1',
-    options: optionsVars,
-    value: 'default'
-  })
-
-  const [analysis2] = usePaneInput(analysisFolder, 'var2', {
-    label: 'Variable 2',
-    options: optionsVars,
-    value: 'default'
-  })
-  const [do_compute] = usePaneInput(analysisFolder, 'compute', {
-    label: 'Apply function',
-    value: false
-  })
+  // const [analysis2] = usePaneInput(analysisFolder, 'var2', {
+  //   label: 'Variable 2',
+  //   options: optionsVars,
+  //   value: 'default'
+  // })
+  // const [do_compute] = usePaneInput(analysisFolder, 'compute', {
+  //   label: 'Apply function',
+  //   value: false
+  // })
 
   useEffect(() => {
     // Update background color
@@ -356,9 +436,9 @@ export function useControlPane(containerID: string) {
     tmax,
     tmin,
     // analysisMethod,
-    analysis1,
-    analysis2,
-    do_compute,
+    var1,
+    var2,
+    compute,
     color_axes,
     alpha_intensity,
     alpha, 

@@ -40,9 +40,9 @@ export function VolumeShader() {
     tmax,
     tmin,
     // analysisMethod,
-    analysis1,
-    analysis2,
-    do_compute,
+    var1,
+    var2,
+    compute,
     color_axes,
     alpha_intensity,
     alpha, 
@@ -110,10 +110,10 @@ export function VolumeShader() {
 
   return (
     <>
-      {do_compute && (
+      {compute && (
         <Analyzer 
-          variable1={analysis1} 
-          variable2={analysis2}
+          variable1={var1} 
+          variable2={var2}
           slice={timeSlice}
           setData={setVolumeData} 
         />

@@ -19,10 +19,17 @@ function arraysEqual<T>(arr1: T[], arr2: T[]): boolean {
 // Calculate Pearson's R
 function pearsonsR<T extends number>(arr1: T[], arr2: T[]): number {
     const n = arr1.length;
-
+    // Check if lengths of the arrays are equal
+    if (arr1.length !== arr2.length) {
+        throw new Error("Input arrays must have the same length");
+    }
+    // Check for NaN values in the arrays
+    if (arr1.some(isNaN) || arr2.some(isNaN)) {
+        return NaN; // Return NaN if any element is NaN
+    }
     // Calculate means
-    const mean1 = arr1.reduce((a: number, b: T) => a + b as number, 0) / n;
-    const mean2 = arr2.reduce((a: number, b: T) => a + b as number, 0) / n;
+    const mean1 = arr1.reduce((a: number, b: T) => a + b, 0) / n;
+    const mean2 = arr2.reduce((a: number, b: T) => a + b, 0) / n;
 
     let numerator = 0;
     let denominator1 = 0;
@@ -37,10 +44,11 @@ function pearsonsR<T extends number>(arr1: T[], arr2: T[]): number {
     }
     const denominator = Math.sqrt(denominator1) * Math.sqrt(denominator2);
     if (denominator === 0) {
-        return 0; // Avoid division by zero
+        return NaN; // Return NaN if denominator is zero
     }
     return numerator / denominator;
 }
+
 
 // Update the PearsonsR function to accept proper types
 const PearsonsR = (
