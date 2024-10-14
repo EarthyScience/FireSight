@@ -41,7 +41,8 @@ const AboutModal = () => {
         Alonso, L., Gans, F., Karasante, I., Ahuja, A., Prapas, I., Kondylatos, S., Papoutsis, I., Panagiotou, E., Mihail, D., Cremer, F., Weber, U., & Carvalhais, N. (2023). SeasFire Cube: A Global Dataset for Seasonal Fire Modeling in the Earth System (0.3) [Data set]. Zenodo. https://doi.org/10.5281/zenodo.8055879
         </p>
         <p> <strong> Contact :</strong></p>
-        <a href="https://lazarusa.github.io/" target='_blank'>Lazaro Alonso</a>
+        <a href="https://lazarusa.github.io/" target='_blank'>Lazaro Alonso</a> <br/>
+        <a href="https://www.bgc-jena.mpg.de/en/bgi/mdi" target='_blank'>Nuno Carvalhais</a>
 
        <p>Max-Planck Institute for Biogeochemistry<br/>
         Hans-Knöll Str. 10<br/>
