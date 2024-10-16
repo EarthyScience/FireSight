@@ -7,7 +7,7 @@ A browser based visualization toolkit for the SeasFire data cube.
 ## Easy start: Clone the repo
 
 ```sh
-git clone https://github.com/SeasFire/FireSight.git
+git clone https://github.com/EarthyScience/FireSight.git
 ```
 
 Then navegate into `FireSight` and install dependencies
