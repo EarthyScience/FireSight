@@ -3,6 +3,9 @@
 # FireSight
 A browser based visualization toolkit for the SeasFire data cube.
 
+> [!TIP]
+> _Demo at:_ https://demofire.vercel.app
+
 
 ## Easy start: Clone the repo
 
