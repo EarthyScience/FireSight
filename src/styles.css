@@ -89,6 +89,7 @@ svg {
 .button-about:focus,
 .button-about:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+  outline: 4px auto Highlight;
 }
 .button-about a {
   color: var(--tp-button-background-color-focus); /* Change to the color you want */

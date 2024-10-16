@@ -138,7 +138,7 @@ export function useControlPane(containerID: string) {
     if (!pane.current?.instance) return;
     const pane_tab = pane.current.instance;    
     const folderDims = pane_tab.addFolder({
-      title: 'Explore Dimensions',
+      title: 'Axes',
       expanded: false,
     });
 
