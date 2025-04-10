@@ -1,57 +1,187 @@
-import * as zarr from "zarrita";
+import { useEffect, useRef, useCallback, Dispatch, SetStateAction } from 'react';
+import { HTTPStore, openArray } from "zarr";
+import { slice as zarrSlice } from "zarr";
+import {LRUCache} from 'lru-cache';
+import { NestedArray, TypedArray } from 'zarr';
+import * as THREE from 'three'
 
-function GetZarrVariables(obj: Object) {
-	//Parses out variables in a Zarr group for variable list
-    const result = [];
-    
-    for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
-            const item = obj[key];
-            if (item.path && 
-                item.path.length > 1 && 
-                item.kind === 'array') {
-                result.push(item.path.substring(1));
-            }
-        }
+// const baseURL = 'http://localhost:5173/SeasFireTimeChunks.zarr';
+const baseURL = 'http://localhost:5173/GlobalForcing.zarr';
+// const baseURL = 'http://localhost:5173/Televit_pred.zarr';
+
+// const baseURL = 'http://localhost:5173/SeasFire_subset.zarr';
+
+type MetaData = Record<string, unknown>;
+interface ZarrLoaderProps {
+  variable: string | null;
+  setData: Dispatch<SetStateAction<NestedArray<TypedArray>>>;
+  setMeta?: (meta: MetaData) => void;
+  slice: {
+    min: number;
+    max: number;
+  };
+  selection?:{
+    uv: THREE.Vector2;
+    normal: THREE.Vector3;
+  }
+}
+
+const CACHE_LIMIT = 10; // Set your desired cache limit
+
+const ZarrLoaderLRU = ({ variable, setData, setMeta, slice }: ZarrLoaderProps) => {
+  const timeStart = slice.min;
+  const timeEnd = slice.max;
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Initialize the LRU cache
+  const cacheRef = useRef(
+    new LRUCache<string, NestedArray<TypedArray>>({
+      max: CACHE_LIMIT, // Maximum number of items in the cache
+      ttl: 1000 * 60 * 60, // Cache entry maximum age in milliseconds (optional)
+    })
+  );
+
+  const fetchData = useCallback(async (signal: AbortSignal) => {
+    if (!variable || variable.trim() === 'default') return;
+
+    const cacheKey = `${variable}_${timeStart}_${timeEnd}`;
+    if (cacheRef.current.has(cacheKey)) {
+      setData(cacheRef.current.get(cacheKey)!);
+      return;
     }
-    
-    return result;
-}
 
-async function GetVariables(storePath: string){
-	const d_store = zarr.tryWithConsolidated(
-		new zarr.FetchStore(storePath)
-	);
-	const group = await d_store.then(store => zarr.open(store, {kind: 'group'}))
-	return GetZarrVariables(group.store.contents())
-}
+    const store = new HTTPStore(baseURL);
+    const fullPath = `${baseURL}/${variable}/.zattrs`;
 
-async function GetArray(storePath: string, variable: string ){
-	const d_store = zarr.tryWithConsolidated(
-		new zarr.FetchStore(storePath)
-	);
-	//Will need to add dependencies in here to check if it is a group or direct array
-	const group = await d_store.then(store => zarr.open(store, {kind: 'group'}))
-	const outVar = await zarr.open(group.resolve(variable), {kind:"array"})
-	
-	const arr = await zarr.get(outVar)
+    try {
+      const metaResponse = await fetch(fullPath, { signal });
+      const metaData: MetaData = await metaResponse.json();
+      setMeta?.(metaData);
 
-	return arr	
+      const zarrArray = await openArray({ store, path: variable, dtype: '<f4' });
 
-}
+    let data;
+    if (zarrArray.shape.length === 3) {
+      data = await zarrArray.get([zarrSlice(timeStart, timeEnd), null, null]) as NestedArray<TypedArray>;
+    } else if (zarrArray.shape.length === 2) {
+      data = await zarrArray.get([null, null]) as NestedArray<TypedArray>;
+    } else if (zarrArray.shape.length === 1) {
+      data = await zarrArray.get([null]) as NestedArray<TypedArray>;
+    } else {
+      console.error('Unsupported shape length:', zarrArray.shape.length);
+    }
+      cacheRef.current.set(cacheKey, data);
+      if (data) {
+        console.log(data)
+        setData(data);
+        // what to do where there is not data?
+      }
 
-//For now we export variables. But we will import these functions over to the plotting component eventually
-export const variables = await GetVariables("https://s3.bgc-jena.mpg.de:9000/esdl-esdc-v3.0.2/esdc-16d-2.5deg-46x72x1440-3.0.2.zarr")
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') return;
+      console.error(error);
+    }
+  }, [variable, timeStart, timeEnd, setData, setMeta]);
 
-export const arr = GetArray("https://s3.bgc-jena.mpg.de:9000/esdl-esdc-v3.0.2/esdc-16d-2.5deg-46x72x1440-3.0.2.zarr","burnt_area")
+  useEffect(() => {
+    if (!variable) return;
 
-//export const arr = await myVar.get();
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
 
-// console.log(d_store)
+    fetchData(abortControllerRef.current.signal);
 
-// const local_store = new zarr.FetchStore("http://localhost:5173/GlobalForcingTiny.zarr");
-// ! note that for local dev you only use `http` without the `s`.
-// ? log a file with proper metadata, set consolidated=true when saving your zarr file
-// export const local_node = await zarr.open.v2(local_store);
-// export const arr = await zarr.open(local_node.resolve("t2m"), { kind: "array" });
-// console.log(local_node)
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [variable, timeStart, timeEnd, fetchData]);
+
+  useEffect(() => {
+    // console.log(`Current cache size: ${cacheRef.current.length}`);
+  }, [cacheRef]);
+
+  return null;
+};
+
+const ZarrLoaderAnalysis = ({ variable, setData, slice }: ZarrLoaderProps) => {
+  const timeStart = slice.min;
+  const timeEnd = slice.max;
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  // Initialize the LRU cache
+  const cacheRef = useRef(
+    new LRUCache<string, NestedArray<TypedArray>>({
+      max: CACHE_LIMIT, // Maximum number of items in the cache
+      ttl: 1000 * 60 * 60, // Cache entry maximum age in milliseconds (optional)
+    })
+  );
+
+  const fetchData = useCallback(async (signal: AbortSignal) => {
+    console.log('needs signal here to trigger download', signal)
+    if (!variable || variable.trim() === 'default') return;
+
+    const cacheKey = `${variable}_${timeStart}_${timeEnd}`;
+    if (cacheRef.current.has(cacheKey)) {
+      setData(cacheRef.current.get(cacheKey)!);
+      return;
+    }
+
+    const store = new HTTPStore(baseURL);
+
+    try {
+
+      const zarrArray = await openArray({ store, path: variable, dtype: '<f4' });
+
+    let data;
+    if (zarrArray.shape.length === 3) {
+      data = await zarrArray.get([zarrSlice(timeStart, timeEnd), null, null]) as NestedArray<TypedArray>;
+    } else if (zarrArray.shape.length === 2) {
+      data = await zarrArray.get([null, null]) as NestedArray<TypedArray>;
+    } else if (zarrArray.shape.length === 1) {
+      data = await zarrArray.get([null]) as NestedArray<TypedArray>;
+    } else {
+      console.error('Unsupported shape length:', zarrArray.shape.length);
+    }
+      cacheRef.current.set(cacheKey, data);
+      if (data) {
+        setData(data);
+        // what to do where there is not data?
+      }
+
+    } catch (error) {
+      if (error instanceof Error && error.name === 'AbortError') return;
+      console.error(error);
+    }
+  }, [variable, timeStart, timeEnd, setData]);
+
+  useEffect(() => {
+    if (!variable) return;
+
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
+
+    fetchData(abortControllerRef.current.signal);
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [variable, timeStart, timeEnd, fetchData]);
+
+  useEffect(() => {
+    // console.log(`Current cache size: ${cacheRef.current.length}`);
+  }, [cacheRef]);
+
+  return null;
+};
+
+export default ZarrLoaderLRU;
+
+export { ZarrLoaderAnalysis }
+
