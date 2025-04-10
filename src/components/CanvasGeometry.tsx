@@ -1,39 +1,48 @@
 import * as THREE from 'three'
 THREE.Cache.enabled = true;
 import { Canvas } from '@react-three/fiber';
-import { VolumeShader } from './VolumeShader'
-// import { Perf } from 'r3f-perf'
+import { Center, OrbitControls, Environment } from '@react-three/drei'
+import * as zarr from 'zarrita'
+import { arr, variables } from './ZarrLoaderLRU'
+import { useEffect, useState } from 'react';
+import './placeholder.css'
 
-import {
-  AccumulativeShadows,
-  RandomizedLight,
-  // Environment,
-  OrbitControls } from '@react-three/drei'
 
-import './CanvasGeometry.css'
-
+arr.then(event=>console.log(typeof(event)))
 export function CanvasGeometry() {
+  const [useVariable,setUseVariable] = useState(null)
+
   return (
+    <>
     <div className='canvas'>
       <Canvas shadows camera={{ position: [-4.5, 3, 4.5], fov: 50 }}
-      // frameloop="demand"
+      frameloop="demand"
       >
-        {/* <Perf position="bottom-left" style={{ bottom: '3.25rem' }} /> */}
-          <VolumeShader />          
-          <OrbitControls 
-            enableDamping={true} 
-            enablePan={false} 
-            enableZoom={true} 
-            minPolarAngle={0} 
-            maxPolarAngle={Math.PI}
-            target={new THREE.Vector3(0,1,0)}
-          />
-          <ambientLight intensity={0.5} />
-          <AccumulativeShadows temporal frames={100} color="black" colorBlend={0.5} opacity={0.5} scale={10} alphaTest={0.85}>
-            <RandomizedLight amount={4} radius={5} ambient={0.5} position={[5, 3, 2]} bias={0.001} />
-          </AccumulativeShadows>
+        <Center top position={[-1, 0, 1]}>
+          <mesh rotation={[0, Math.PI / 4, 0]}>
+            <boxGeometry args={[1, 1, 1]} />
+            <meshStandardMaterial color="indianred" />
+          </mesh>
+        </Center>
+      <OrbitControls minPolarAngle={0} maxPolarAngle={Math.PI / 2} />
+      <Environment preset="city" />
       </Canvas>
     </div>
+    {/* This drop down is temp just to show the consolidating of variables */}
+    <select 
+      className='varDropdown' 
+      onChange={(event)=>setUseVariable(event.target.value)}
+      
+    >
+      <option value="" disabled>Select an option</option>
+      {variables.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+        ))}
+
+    </select>
+    </>
   )
 }
 

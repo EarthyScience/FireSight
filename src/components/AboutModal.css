@@ -50,3 +50,8 @@
   color: var(--accent-color1);
   text-align: center;
 }
+
+.modal-content h1 {
+  color: orangered;
+  font-size: 1.5rem;
+}
